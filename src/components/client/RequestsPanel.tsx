@@ -91,7 +91,6 @@ export const RequestsPanel: React.FC = () => {
     <div className="space-y-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <h2 className="text-2xl font-bold text-black">Requests</h2>
         <button
           onClick={() => setShowCreateForm(true)}
           className="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3 bg-primary-black text-primary-white rounded-xl shadow-lg hover:bg-opacity-90 transition-all duration-200"
