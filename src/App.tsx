@@ -8,6 +8,8 @@ import { AdminDashboard } from './components/admin/AdminDashboard';
 import { SuccessPage } from './components/SuccessPage';
 import { CancelPage } from './components/CancelPage';
 import { NotFound } from './components/NotFound';
+import { PrivacyPolicy } from './components/PrivacyPolicy';
+import { TermsOfService } from './components/TermsOfService';
 
 const PrivateRoute: React.FC<{ children: React.ReactNode; allowedRoles?: string[] }> = ({ 
   children, 
@@ -71,6 +73,10 @@ const AppContent: React.FC = () => {
             <AuthForm />
           </PublicRoute>
         } />
+        
+        {/* Legal Pages */}
+        <Route path="/privacy" element={<PrivacyPolicy />} />
+        <Route path="/terms" element={<TermsOfService />} />
 
         {/* Payment Result Pages */}
         <Route path="/success" element={

@@ -363,6 +363,30 @@ export const AuthForm: React.FC = () => {
                 </button>
               )}
             </div>
+
+            {/* Privacy Policy and Terms of Service */}
+            <div className="text-center pt-4 border-t border-gray-200">
+              <p className="text-xs text-gray-500">
+                By {mode === 'register' ? 'creating an account' : 'signing in'}, you agree to our{' '}
+                <a
+                  href="/terms"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-primary-black hover:underline"
+                >
+                  Terms of Service
+                </a>
+                {' '}and{' '}
+                <a
+                  href="/privacy"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-primary-black hover:underline"
+                >
+                  Privacy Policy
+                </a>
+              </p>
+            </div>
           </form>
         </div>
       </div>
