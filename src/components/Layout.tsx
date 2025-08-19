@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useSubscription } from '../hooks/useSubscription';
-import { LogOut, User, Menu, X, MessageSquare, FileText, Users, FolderOpen, CreditCard, Settings, ShoppingBag, Receipt } from 'lucide-react';
+import { LogOut, User, Menu, X, MessageSquare, FileText, Users, FolderOpen, CreditCard, Settings, ShoppingBag, Receipt, Home } from 'lucide-react';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -238,12 +238,40 @@ export const Layout: React.FC<LayoutProps> = ({
         </header>
 
         {/* Content Area */}
-        <main className="flex-1 overflow-auto">
+        <main className="flex-1 overflow-auto pb-20 lg:pb-0">
           <div className="w-full max-w-[1300px] mx-auto px-4 py-6 lg:px-6">
             {children}
           </div>
         </main>
       </div>
+
+      {/* Mobile Floating Navigation */}
+      {showSidebar && (
+        <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-2 z-40">
+          <div className="flex justify-around items-center max-w-md mx-auto">
+            {tabs.slice(0, 5).map((tab) => {
+              const IconComponent = tab.icon;
+              const isActive = activeTab === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => handleTabClick(tab.id)}
+                  className={`flex flex-col items-center justify-center p-2 rounded-lg transition-colors min-w-0 ${
+                    isActive
+                      ? 'text-gray-900'
+                      : 'text-gray-500'
+                  }`}
+                >
+                  <IconComponent className={`h-5 w-5 mb-1 ${isActive ? 'text-gray-900' : 'text-gray-500'}`} />
+                  <span className={`text-xs font-medium truncate ${isActive ? 'text-gray-900' : 'text-gray-500'}`}>
+                    {tab.label}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
