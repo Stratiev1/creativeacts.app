@@ -215,7 +215,7 @@ export const Layout: React.FC<LayoutProps> = ({
       <div className="flex-1 flex flex-col min-w-0">
         {/* Top Header */}
         <header className="sticky top-0 z-30 bg-primary-white border-b border-gray-200 px-4 py-3 lg:px-6 shadow-sm">
-          <div className="flex items-center justify-between">
+          <div className="w-full max-w-[1300px] mx-auto flex items-center justify-between">
             <div className="flex items-center space-x-4">
               {showSidebar && (
                 <button
