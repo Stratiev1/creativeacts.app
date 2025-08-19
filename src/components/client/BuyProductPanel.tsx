@@ -55,11 +55,11 @@ export const BuyProductPanel: React.FC = () => {
         {products.map((product) => (
           <div 
             key={product.id} 
-            className="bg-gray-50 rounded-lg p-6 hover:shadow-md transition-shadow border border-gray-200"
+            className="bg-primary-grey rounded-xl p-6 hover:shadow-lg transition-all duration-200 border border-gray-200"
           >
             <div className="mb-4">
               <div className="flex items-center justify-between mb-3">
-                <h3 className="text-lg font-semibold text-black">{product.name}</h3>
+                <h3 className="text-lg font-semibold text-primary-black">{product.name}</h3>
                 <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${getProductTypeColor(product.mode)}`}>
                   {getProductTypeLabel(product.mode)}
                 </span>
@@ -70,7 +70,7 @@ export const BuyProductPanel: React.FC = () => {
               </p>
               
               <div className="flex items-baseline justify-between mb-4">
-                <span className="text-2xl font-bold text-black">
+                <span className="text-2xl font-bold text-primary-black">
                   {formatPrice(product.price, product.currency)}
                 </span>
                 {product.mode === 'subscription' && (
@@ -82,12 +82,12 @@ export const BuyProductPanel: React.FC = () => {
             <button
               onClick={() => handlePurchase(product.id)}
               disabled={isLoading && selectedProduct === product.id}
-              className="w-full py-3 px-4 bg-black text-white rounded-md hover:bg-gray-800 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+              className="w-full py-3 px-6 bg-primary-black text-primary-white rounded-xl shadow-lg hover:bg-opacity-90 transition-all duration-200 font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
               onMouseDown={() => setSelectedProduct(product.id)}
             >
               {isLoading && selectedProduct === product.id ? (
                 <>
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin text-primary-white" />
                   Processing...
                 </>
               ) : (
@@ -102,7 +102,7 @@ export const BuyProductPanel: React.FC = () => {
       </div>
 
       <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
-        <h3 className="text-lg font-semibold text-blue-900 mb-2">Secure Payment</h3>
+        <h3 className="text-lg font-semibold text-primary-black mb-2">Secure Payment</h3>
         <p className="text-blue-800 text-sm">
           All payments are processed securely through Stripe. Your payment information is encrypted and never stored on our servers.
         </p>

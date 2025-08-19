@@ -72,17 +72,17 @@ export const SubscriptionsPanel: React.FC = () => {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold text-black">Subscriptions</h2>
+        <h2 className="text-2xl font-bold text-primary-black">Subscriptions</h2>
       </div>
 
       {/* Current Subscription */}
       {subscription && subscription.subscription_status !== 'not_started' ? (
-        <div className="bg-gray-50 rounded-lg p-6">
+        <div className="bg-primary-grey rounded-xl p-6">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center space-x-3">
               {getStatusIcon(subscription.subscription_status)}
               <div>
-                <h3 className="text-lg font-semibold text-black">
+                <h3 className="text-lg font-semibold text-primary-black">
                   {subscription.product_name || 'Current Subscription'}
                 </h3>
                 <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full border capitalize ${getStatusColor(subscription.subscription_status)}`}>
@@ -130,7 +130,7 @@ export const SubscriptionsPanel: React.FC = () => {
           )}
         </div>
       ) : (
-        <div className="bg-gray-50 rounded-lg p-8 text-center">
+        <div className="bg-primary-grey rounded-xl p-8 text-center">
           <CreditCard className="h-12 w-12 text-gray-400 mx-auto mb-4" />
           <h3 className="text-lg font-medium text-gray-900 mb-2">No Active Subscription</h3>
           <p className="text-gray-500 mb-4">Choose a subscription plan to get started</p>
@@ -139,7 +139,7 @@ export const SubscriptionsPanel: React.FC = () => {
 
       {/* Available Plans */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-black">Available Plans</h3>
+        <h3 className="text-lg font-semibold text-primary-black">Available Plans</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {subscriptionProducts.map((product) => {
             const isCurrentPlan = subscription?.price_id === product.priceId;
@@ -147,16 +147,16 @@ export const SubscriptionsPanel: React.FC = () => {
             return (
               <div
                 key={product.id}
-                className={`border-2 rounded-lg p-6 ${
+                className={`border-2 rounded-xl p-6 transition-all duration-200 ${
                   isCurrentPlan
-                    ? 'border-black bg-gray-50'
-                    : 'border-gray-200 bg-white hover:border-gray-300'
-                } transition-colors`}
+                    ? 'border-primary-orange bg-primary-grey shadow-lg'
+                    : 'border-gray-200 bg-primary-white hover:border-primary-orange hover:shadow-md'
+                }`}
               >
                 <div className="text-center mb-6">
-                  <h4 className="text-xl font-bold text-black mb-2">{product.name}</h4>
+                  <h4 className="text-xl font-bold text-primary-black mb-2">{product.name}</h4>
                   <div className="mb-4">
-                    <span className="text-3xl font-bold text-black">
+                    <span className="text-3xl font-bold text-primary-black">
                       {formatPrice(product.price, product.currency)}
                     </span>
                     <span className="text-gray-600">/month</span>
@@ -167,15 +167,15 @@ export const SubscriptionsPanel: React.FC = () => {
                 <button
                   onClick={() => purchaseProduct(product)}
                   disabled={isCurrentPlan || isCheckoutLoading}
-                  className={`w-full py-3 px-4 rounded-md font-medium transition-colors flex items-center justify-center ${
+                  className={`w-full py-3 px-6 rounded-xl font-medium transition-all duration-200 flex items-center justify-center shadow-lg ${
                     isCurrentPlan
                       ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
-                      : 'bg-black text-white hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed'
+                      : 'bg-primary-black text-primary-white hover:bg-opacity-90 disabled:opacity-50 disabled:cursor-not-allowed'
                   }`}
                 >
                   {isCheckoutLoading ? (
                     <>
-                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin text-primary-white" />
                       Processing...
                     </>
                   ) : isCurrentPlan ? (

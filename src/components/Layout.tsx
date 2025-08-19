@@ -66,7 +66,7 @@ export const Layout: React.FC<LayoutProps> = ({
     <div className="min-h-screen bg-gray-50 flex">
       {/* Desktop Sidebar */}
       {showSidebar && (
-        <div className={`hidden lg:flex flex-col bg-white border-r border-gray-200 transition-all duration-300 ${
+        <div className={`hidden lg:flex flex-col bg-primary-white border-r border-gray-200 transition-all duration-300 ${
           sidebarCollapsed ? 'w-16' : 'w-64'
         }`}>
           {/* Sidebar Header */}
@@ -74,12 +74,12 @@ export const Layout: React.FC<LayoutProps> = ({
             {!sidebarCollapsed && (
               <div className="flex items-center space-x-2">
                 <img src="/logo.svg" alt="Creative Acts" className="h-8" />
-                <span className="font-semibold text-gray-900">Creative Acts</span>
+                <span className="font-semibold text-primary-black">Creative Acts</span>
               </div>
             )}
             <button
               onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-              className="p-1 rounded-md hover:bg-gray-100 transition-colors"
+              className="p-1 rounded-md hover:bg-primary-grey transition-colors"
             >
               <Menu className="h-5 w-5 text-gray-600" />
             </button>
@@ -95,10 +95,10 @@ export const Layout: React.FC<LayoutProps> = ({
                   <li key={tab.id}>
                     <button
                       onClick={() => handleTabClick(tab.id)}
-                      className={`w-full flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
+                      className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 ${
                         isActive
-                          ? 'bg-gray-900 text-white'
-                          : 'text-gray-700 hover:bg-gray-100'
+                          ? 'bg-primary-orange text-primary-white shadow-lg'
+                          : 'text-gray-700 hover:bg-primary-grey'
                       }`}
                       title={sidebarCollapsed ? tab.label : undefined}
                     >
@@ -119,7 +119,7 @@ export const Layout: React.FC<LayoutProps> = ({
               </div>
               {!sidebarCollapsed && (
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-gray-900 truncate">
+                  <p className="text-sm font-medium text-primary-black truncate">
                     {user?.user_metadata?.name || user?.email}
                   </p>
                   <p className="text-xs text-gray-500 truncate">
@@ -131,7 +131,7 @@ export const Layout: React.FC<LayoutProps> = ({
             {!sidebarCollapsed && (
               <button
                 onClick={signOut}
-                className="w-full mt-3 flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+                className="w-full mt-3 flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-primary-grey rounded-lg transition-colors"
               >
                 <LogOut className="h-4 w-4 mr-3" />
                 Logout
@@ -143,17 +143,17 @@ export const Layout: React.FC<LayoutProps> = ({
 
       {/* Mobile Menu Overlay */}
       {mobileMenuOpen && (
-        <div className="lg:hidden fixed inset-0 z-50 bg-black bg-opacity-50" onClick={() => setMobileMenuOpen(false)}>
-          <div className="fixed inset-y-0 left-0 w-64 bg-white shadow-xl" onClick={(e) => e.stopPropagation()}>
+        <div className="lg:hidden fixed inset-0 z-50 bg-primary-black bg-opacity-50" onClick={() => setMobileMenuOpen(false)}>
+          <div className="fixed inset-y-0 left-0 w-64 bg-primary-white shadow-xl" onClick={(e) => e.stopPropagation()}>
             {/* Mobile Menu Header */}
             <div className="flex items-center justify-between p-4 border-b border-gray-200">
               <div className="flex items-center space-x-2">
                 <img src="/logo.svg" alt="Creative Acts" className="h-8" />
-                <span className="font-semibold text-gray-900">Creative Acts</span>
+                <span className="font-semibold text-primary-black">Creative Acts</span>
               </div>
               <button
                 onClick={() => setMobileMenuOpen(false)}
-                className="p-1 rounded-md hover:bg-gray-100 transition-colors"
+                className="p-1 rounded-md hover:bg-primary-grey transition-colors"
               >
                 <X className="h-5 w-5 text-gray-600" />
               </button>
@@ -169,10 +169,10 @@ export const Layout: React.FC<LayoutProps> = ({
                     <li key={tab.id}>
                       <button
                         onClick={() => handleTabClick(tab.id)}
-                        className={`w-full flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
+                        className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 ${
                           isActive
-                            ? 'bg-gray-900 text-white'
-                            : 'text-gray-700 hover:bg-gray-100'
+                            ? 'bg-primary-orange text-primary-white shadow-lg'
+                            : 'text-gray-700 hover:bg-primary-grey'
                         }`}
                       >
                         <IconComponent className="h-5 w-5 mr-3" />
@@ -191,7 +191,7 @@ export const Layout: React.FC<LayoutProps> = ({
                   <User className="h-4 w-4 text-gray-600" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-900">
+                  <p className="text-sm font-medium text-primary-black">
                     {user?.user_metadata?.name || user?.email}
                   </p>
                   <p className="text-xs text-gray-500">
@@ -201,7 +201,7 @@ export const Layout: React.FC<LayoutProps> = ({
               </div>
               <button
                 onClick={signOut}
-                className="w-full flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+                className="w-full flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-primary-grey rounded-lg transition-colors"
               >
                 <LogOut className="h-4 w-4 mr-3" />
                 Logout
@@ -214,18 +214,18 @@ export const Layout: React.FC<LayoutProps> = ({
       {/* Main Content */}
       <div className="flex-1 flex flex-col min-w-0">
         {/* Top Header */}
-        <header className="bg-white border-b border-gray-200 px-4 py-3 lg:px-6">
+        <header className="bg-primary-white border-b border-gray-200 px-4 py-3 lg:px-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
               {showSidebar && (
                 <button
                   onClick={() => setMobileMenuOpen(true)}
-                  className="lg:hidden p-2 rounded-md hover:bg-gray-100 transition-colors"
+                  className="lg:hidden p-2 rounded-md hover:bg-primary-grey transition-colors"
                 >
                   <Menu className="h-5 w-5 text-gray-600" />
                 </button>
               )}
-              <h1 className="text-lg font-semibold text-gray-900">{title}</h1>
+              <h1 className="text-lg font-semibold text-primary-black">{title}</h1>
             </div>
             
             {/* Mobile User Menu */}
@@ -247,7 +247,7 @@ export const Layout: React.FC<LayoutProps> = ({
 
       {/* Mobile Floating Navigation */}
       {showSidebar && (
-        <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-2 z-40">
+        <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-primary-white border-t border-gray-200 px-4 py-2 z-40 shadow-lg">
           <div className="flex justify-around items-center max-w-md mx-auto">
             {tabs.slice(0, 5).map((tab) => {
               const IconComponent = tab.icon;
@@ -256,14 +256,14 @@ export const Layout: React.FC<LayoutProps> = ({
                 <button
                   key={tab.id}
                   onClick={() => handleTabClick(tab.id)}
-                  className={`flex flex-col items-center justify-center p-2 rounded-lg transition-colors min-w-0 ${
+                  className={`flex flex-col items-center justify-center p-3 rounded-xl transition-all duration-200 min-w-0 ${
                     isActive
-                      ? 'text-gray-900'
+                      ? 'bg-primary-orange text-primary-white shadow-md'
                       : 'text-gray-500'
                   }`}
                 >
-                  <IconComponent className={`h-5 w-5 mb-1 ${isActive ? 'text-gray-900' : 'text-gray-500'}`} />
-                  <span className={`text-xs font-medium truncate ${isActive ? 'text-gray-900' : 'text-gray-500'}`}>
+                  <IconComponent className={`h-5 w-5 mb-1 ${isActive ? 'text-primary-white' : 'text-gray-500'}`} />
+                  <span className={`text-xs font-medium truncate ${isActive ? 'text-primary-white' : 'text-gray-500'}`}>
                     {tab.label}
                   </span>
                 </button>

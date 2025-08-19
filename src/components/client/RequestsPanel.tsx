@@ -94,7 +94,7 @@ export const RequestsPanel: React.FC = () => {
         <h2 className="text-2xl font-bold text-black">Requests</h2>
         <button
           onClick={() => setShowCreateForm(true)}
-          className="w-full sm:w-auto inline-flex items-center justify-center px-4 py-2 bg-black text-white rounded-md hover:bg-gray-800 transition-colors"
+          className="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3 bg-primary-black text-primary-white rounded-xl shadow-lg hover:bg-opacity-90 transition-all duration-200"
         >
           <Plus className="h-4 w-4 mr-2" />
           Create New Request
@@ -102,14 +102,14 @@ export const RequestsPanel: React.FC = () => {
       </div>
 
       {/* View Mode Tabs */}
-      <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg overflow-x-auto">
+      <div className="flex space-x-2 bg-primary-grey p-2 rounded-xl overflow-x-auto">
         {(['current', 'finished', 'pending'] as ViewMode[]).map((mode) => (
           <button
             key={mode}
             onClick={() => setViewMode(mode)}
-            className={`flex-1 min-w-[100px] px-3 py-2 text-sm font-medium rounded-md transition-colors capitalize whitespace-nowrap ${
+            className={`flex-1 min-w-[100px] px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 capitalize whitespace-nowrap ${
               viewMode === mode
-                ? 'bg-white text-black shadow-sm'
+                ? 'bg-primary-white text-primary-black shadow-md'
                 : 'text-gray-600 hover:text-black'
             }`}
           >
@@ -120,13 +120,13 @@ export const RequestsPanel: React.FC = () => {
 
       {/* Create Request Form */}
       {showCreateForm && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50" onClick={() => setShowCreateForm(false)}>
-          <div className="bg-white rounded-lg p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+        <div className="fixed inset-0 bg-primary-black bg-opacity-50 flex items-center justify-center p-4 z-50" onClick={() => setShowCreateForm(false)}>
+          <div className="bg-primary-white rounded-xl p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto shadow-2xl" onClick={(e) => e.stopPropagation()}>
             <div className="flex justify-between items-center mb-6">
-              <h3 className="text-lg font-bold text-black">Create New Request</h3>
+              <h3 className="text-lg font-bold text-primary-black">Create New Request</h3>
               <button
                 onClick={() => setShowCreateForm(false)}
-                className="text-gray-400 hover:text-black"
+                className="text-gray-400 hover:text-primary-black"
               >
                 <X className="h-6 w-6" />
               </button>
@@ -155,7 +155,7 @@ export const RequestsPanel: React.FC = () => {
                   value={formData.description}
                   onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
                   rows={4}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-orange focus:border-transparent"
                   placeholder="Describe your project requirements..."
                   required
                 />
@@ -169,7 +169,7 @@ export const RequestsPanel: React.FC = () => {
                   value={formData.notes}
                   onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value }))}
                   rows={2}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-orange focus:border-transparent"
                   placeholder="Any additional notes or preferences..."
                 />
               </div>
@@ -183,7 +183,7 @@ export const RequestsPanel: React.FC = () => {
                     type="file"
                     onChange={handleFileUpload}
                     multiple
-                    className="hidden"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-orange focus:border-transparent"
                     id="file-upload"
                   />
                   <label
@@ -231,12 +231,12 @@ export const RequestsPanel: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setShowEnhancer(!showEnhancer)}
-                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                    showEnhancer ? 'bg-purple-600' : 'bg-gray-200'
+                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-all duration-200 ${
+                    showEnhancer ? 'bg-primary-orange' : 'bg-gray-200'
                   }`}
                 >
                   <span
-                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                    className={`inline-block h-4 w-4 transform rounded-full bg-primary-white transition-transform ${
                       showEnhancer ? 'translate-x-6' : 'translate-x-1'
                     }`}
                   />
@@ -259,13 +259,13 @@ export const RequestsPanel: React.FC = () => {
                     setShowEnhancer(false);
                     setEnhancerSelections({});
                   }}
-                  className="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors"
+                  className="px-4 py-2 border border-gray-300 text-gray-700 rounded-xl hover:bg-primary-grey transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-black text-white rounded-md hover:bg-gray-800 transition-colors"
+                  className="px-6 py-3 bg-primary-black text-primary-white rounded-xl shadow-lg hover:bg-opacity-90 transition-all duration-200"
                 >
                   Create Request
                 </button>

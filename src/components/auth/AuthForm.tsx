@@ -119,7 +119,7 @@ export const AuthForm: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white flex items-center justify-center px-4">
+    <div className="min-h-screen bg-primary-white flex items-center justify-center px-4">
       <div className="max-w-md w-full">
         <div className="text-center mb-8">
           <div className="flex justify-center mb-4">
@@ -137,7 +137,7 @@ export const AuthForm: React.FC = () => {
           </p>
         </div>
 
-        <div className="bg-gray-50 rounded-lg p-8">
+        <div className="bg-primary-grey rounded-lg p-8">
           <form onSubmit={handleSubmit} className="space-y-6">
             {mode === 'register' && (
               <div>
@@ -153,7 +153,7 @@ export const AuthForm: React.FC = () => {
                     type="text"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
+                    className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-orange focus:border-transparent"
                     placeholder="John Doe"
                     required
                   />
@@ -175,7 +175,7 @@ export const AuthForm: React.FC = () => {
                     type="tel"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
-                    className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
+                    className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-orange focus:border-transparent"
                     placeholder="+1 (555) 123-4567"
                     required
                   />
@@ -197,7 +197,7 @@ export const AuthForm: React.FC = () => {
                     type="text"
                     value={company}
                     onChange={(e) => setCompany(e.target.value)}
-                    className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
+                    className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-orange focus:border-transparent"
                     placeholder="Your Company Inc."
                   />
                 </div>
@@ -217,7 +217,7 @@ export const AuthForm: React.FC = () => {
                     id="country"
                     value={country}
                     onChange={(e) => setCountry(e.target.value)}
-                    className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent appearance-none bg-white"
+                    className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-orange focus:border-transparent appearance-none bg-primary-white"
                     required
                   >
                     <option value="">Select your country</option>
@@ -244,7 +244,7 @@ export const AuthForm: React.FC = () => {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
+                  className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-orange focus:border-transparent"
                   placeholder="you@example.com"
                   required
                 />
@@ -265,7 +265,7 @@ export const AuthForm: React.FC = () => {
                     type={showPassword ? 'text' : 'password'}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="block w-full pl-10 pr-10 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
+                    className="block w-full pl-10 pr-10 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-orange focus:border-transparent"
                     placeholder="••••••••"
                     required
                   />
@@ -301,11 +301,11 @@ export const AuthForm: React.FC = () => {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-black hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="w-full flex justify-center py-3 px-6 border border-transparent rounded-xl shadow-lg text-sm font-medium text-primary-white bg-primary-black hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-orange disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
             >
               {isLoading ? (
                 <div className="flex items-center">
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary-white mr-2"></div>
                   Loading...
                 </div>
               ) : (
@@ -332,7 +332,7 @@ export const AuthForm: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => setMode('register')}
-                      className="text-black hover:underline"
+                      className="text-primary-black hover:underline"
                     >
                       Sign up
                     </button>
@@ -346,7 +346,7 @@ export const AuthForm: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => setMode('login')}
-                    className="text-black hover:underline"
+                    className="text-primary-black hover:underline"
                   >
                     Sign in
                   </button>
@@ -357,7 +357,7 @@ export const AuthForm: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setMode('login')}
-                  className="text-sm text-black hover:underline"
+                  className="text-sm text-primary-black hover:underline"
                 >
                   Back to sign in
                 </button>
