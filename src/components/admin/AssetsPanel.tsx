@@ -257,9 +257,9 @@ export const AssetsPanel: React.FC = () => {
   };
 
   return (
-    <div className="h-full flex bg-white">
+    <div className="h-full flex flex-col lg:flex-row bg-white">
       {/* Sidebar */}
-      <div className="w-80 border-r border-gray-200 flex flex-col">
+      <div className="w-full lg:w-80 border-b lg:border-b-0 lg:border-r border-gray-200 flex flex-col lg:h-full">
         {/* Sidebar Header */}
         <div className="p-6 border-b border-gray-200">
           <div className="flex items-center justify-between mb-4">
@@ -275,10 +275,10 @@ export const AssetsPanel: React.FC = () => {
         </div>
 
         {/* Categories */}
-        <div className="flex-1 overflow-y-auto">
+        <div className="flex-1 overflow-y-auto lg:block">
           <div className="p-4">
             <h3 className="text-sm font-medium text-gray-900 mb-3">Categories</h3>
-            <div className="space-y-1">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-1 gap-2 lg:space-y-1 lg:block">
               {categories.map((category) => (
                 <div key={category.id} className="group">
                   <button
@@ -315,13 +315,13 @@ export const AssetsPanel: React.FC = () => {
       {/* Main Content */}
       <div className="flex-1 flex flex-col">
         {/* Header */}
-        <div className="p-6 border-b border-gray-200">
+        <div className="p-4 lg:p-6 border-b border-gray-200">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h1 className="text-2xl font-semibold text-gray-900 capitalize">
+              <h1 className="text-xl lg:text-2xl font-semibold text-gray-900 capitalize">
                 {selectedCategoryData?.name || 'Assets'}
               </h1>
-              <p className="text-sm text-gray-600 mt-1">
+              <p className="text-xs lg:text-sm text-gray-600 mt-1">
                 Client Assets / {selectedCategoryData?.name}
               </p>
             </div>
@@ -346,8 +346,8 @@ export const AssetsPanel: React.FC = () => {
           </div>
 
           {/* Action Bar */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div className="flex flex-wrap items-center gap-2 lg:gap-3">
               <input
                 type="file"
                 ref={fileInputRef}
@@ -359,14 +359,14 @@ export const AssetsPanel: React.FC = () => {
               <button 
                 onClick={() => fileInputRef.current?.click()}
                 disabled={isUploading}
-                className="inline-flex items-center px-3 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors disabled:opacity-50"
+                className="inline-flex items-center px-3 py-2 bg-blue-600 text-white rounded-lg text-xs lg:text-sm font-medium hover:bg-blue-700 transition-colors disabled:opacity-50"
               >
                 <Upload className="h-4 w-4 mr-2" />
                 {isUploading ? 'Uploading...' : 'Upload'}
               </button>
               <button
                 onClick={handleSelectAll}
-                className="inline-flex items-center px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+                className="inline-flex items-center px-3 py-2 border border-gray-300 rounded-lg text-xs lg:text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
               >
                 {selectedAssets.length === filteredAssets.length && filteredAssets.length > 0 ? (
                   <CheckSquare className="h-4 w-4 mr-2" />
@@ -379,23 +379,23 @@ export const AssetsPanel: React.FC = () => {
                 <>
                   <button 
                     onClick={handleDownloadSelected}
-                    className="inline-flex items-center px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+                    className="inline-flex items-center px-2 lg:px-3 py-2 border border-gray-300 rounded-lg text-xs lg:text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
                   >
                     <Download className="h-4 w-4 mr-2" />
-                    Download ({selectedAssets.length})
+                    <span className="hidden sm:inline">Download</span> ({selectedAssets.length})
                   </button>
                   <button 
                     onClick={handleDeleteSelected}
-                    className="inline-flex items-center px-3 py-2 border border-red-300 text-red-700 rounded-lg text-sm font-medium hover:bg-red-50 transition-colors"
+                    className="inline-flex items-center px-2 lg:px-3 py-2 border border-red-300 text-red-700 rounded-lg text-xs lg:text-sm font-medium hover:bg-red-50 transition-colors"
                   >
                     <Trash2 className="h-4 w-4 mr-2" />
-                    Delete ({selectedAssets.length})
+                    <span className="hidden sm:inline">Delete</span> ({selectedAssets.length})
                   </button>
                 </>
               )}
             </div>
 
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center gap-2 lg:gap-3 w-full sm:w-auto">
               <div className="relative">
                 <Search className="h-4 w-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                 <input
@@ -403,7 +403,7 @@ export const AssetsPanel: React.FC = () => {
                   placeholder="Search assets..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full sm:w-auto pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-xs lg:text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
               </div>
               <button className="p-2 border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors">
@@ -415,7 +415,7 @@ export const AssetsPanel: React.FC = () => {
 
         {/* Content Area */}
         <div 
-          className={`flex-1 p-6 ${isDragOver ? 'bg-blue-50 border-2 border-dashed border-blue-300' : ''}`}
+          className={`flex-1 p-4 lg:p-6 ${isDragOver ? 'bg-blue-50 border-2 border-dashed border-blue-300' : ''}`}
           onDrop={handleDrop}
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
@@ -440,20 +440,20 @@ export const AssetsPanel: React.FC = () => {
               </button>
             </div>
           ) : (
-            <div className={viewMode === 'grid' ? 'grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4' : 'space-y-2'}>
+            <div className={viewMode === 'grid' ? 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 lg:gap-4' : 'space-y-2'}>
               {filteredAssets.map((asset) => (
                 <div
                   key={asset.id}
                   className={`${
                     viewMode === 'grid'
-                      ? 'p-4 border border-gray-200 rounded-lg hover:shadow-md transition-all cursor-pointer group'
-                      : 'flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer group'
+                      ? 'p-3 lg:p-4 border border-gray-200 rounded-lg hover:shadow-md transition-all cursor-pointer group'
+                      : 'flex items-center p-2 lg:p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer group'
                   } ${selectedAssets.includes(asset.id) ? 'ring-2 ring-blue-500 border-blue-500' : ''}`}
                   onClick={() => handleAssetSelect(asset.id)}
                 >
                   {viewMode === 'grid' ? (
                     <>
-                      <div className="flex items-center justify-center h-16 mb-3 relative">
+                      <div className="flex items-center justify-center h-12 lg:h-16 mb-2 lg:mb-3 relative">
                         {getFileIcon(asset.type)}
                         <div className="absolute top-0 right-0 opacity-0 group-hover:opacity-100 transition-opacity">
                           <button
@@ -467,7 +467,7 @@ export const AssetsPanel: React.FC = () => {
                           </button>
                         </div>
                       </div>
-                      <h4 className="text-sm font-medium text-gray-900 truncate">{asset.name}</h4>
+                      <h4 className="text-xs lg:text-sm font-medium text-gray-900 truncate">{asset.name}</h4>
                       <p className="text-xs text-gray-500 mt-1">{asset.size}</p>
                       <p className="text-xs text-gray-400">{asset.uploadDate}</p>
                     </>
@@ -486,10 +486,10 @@ export const AssetsPanel: React.FC = () => {
                         {getFileIcon(asset.type)}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <h4 className="text-sm font-medium text-gray-900 truncate">{asset.name}</h4>
+                        <h4 className="text-xs lg:text-sm font-medium text-gray-900 truncate">{asset.name}</h4>
                         <p className="text-xs text-gray-500">{asset.uploadDate}</p>
                       </div>
-                      <div className="text-sm text-gray-500 mr-3">{asset.size}</div>
+                      <div className="text-xs lg:text-sm text-gray-500 mr-3 hidden sm:block">{asset.size}</div>
                       <div className="opacity-0 group-hover:opacity-100 transition-opacity">
                         <button
                           onClick={(e) => {
@@ -512,8 +512,8 @@ export const AssetsPanel: React.FC = () => {
 
       {/* Create Category Modal */}
       {showCreateCategory && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-md">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50" onClick={() => setShowCreateCategory(false)}>
+          <div className="bg-white rounded-lg p-4 lg:p-6 w-full max-w-md mx-4" onClick={(e) => e.stopPropagation()}>
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Create New Category</h3>
             <input
               type="text"
@@ -547,10 +547,10 @@ export const AssetsPanel: React.FC = () => {
 
       {/* Drag Overlay */}
       {isDragOver && (
-        <div className="fixed inset-0 bg-blue-500 bg-opacity-20 flex items-center justify-center z-40 pointer-events-none">
-          <div className="bg-white rounded-lg p-8 shadow-lg">
+        <div className="fixed inset-0 bg-blue-500 bg-opacity-20 flex items-center justify-center z-40 pointer-events-none p-4">
+          <div className="bg-white rounded-lg p-6 lg:p-8 shadow-lg text-center">
             <Upload className="h-12 w-12 text-blue-500 mx-auto mb-4" />
-            <p className="text-lg font-medium text-gray-900">Drop files to upload</p>
+            <p className="text-base lg:text-lg font-medium text-gray-900">Drop files to upload</p>
           </div>
         </div>
       )}
