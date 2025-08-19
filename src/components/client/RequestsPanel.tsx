@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useData, Request } from '../../contexts/DataContext';
 import { useAuth } from '../../contexts/AuthContext';
+import { DesignEnhancer } from './DesignEnhancer';
+import { useDesignEnhancer } from '../../hooks/useDesignEnhancer';
 import { Plus, FileText, Clock, CheckCircle, AlertCircle, Upload, X } from 'lucide-react';
 
 type ViewMode = 'current' | 'finished' | 'pending';
@@ -8,8 +10,11 @@ type ViewMode = 'current' | 'finished' | 'pending';
 export const RequestsPanel: React.FC = () => {
   const { requests, addRequest } = useData();
   const { user } = useAuth();
+  const { saveSelections } = useDesignEnhancer();
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [viewMode, setViewMode] = useState<ViewMode>('current');
+  const [showEnhancer, setShowEnhancer] = useState(false);
+  const [enhancerSelections, setEnhancerSelections] = useState<{ [categoryId: string]: string }>({});
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -24,13 +29,23 @@ export const RequestsPanel: React.FC = () => {
     e.preventDefault();
     if (!user) return;
 
-    addRequest({
+    const newRequest = {
       ...formData,
       clientId: user.id,
       status: 'pending'
-    });
+    };
+
+    addRequest(newRequest);
+
+    // Save design enhancer selections if any
+    if (Object.keys(enhancerSelections).length > 0) {
+      const requestId = Date.now().toString(); // This should match the ID generated in addRequest
+      saveSelections(requestId, enhancerSelections);
+    }
 
     setFormData({ title: '', description: '', notes: '', files: [] });
+    setEnhancerSelections({});
+    setShowEnhancer(false);
     setShowCreateForm(false);
   };
 
@@ -105,8 +120,8 @@ export const RequestsPanel: React.FC = () => {
 
       {/* Create Request Form */}
       {showCreateForm && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50" onClick={() => setShowCreateForm(false)}>
+          <div className="bg-white rounded-lg p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
             <div className="flex justify-between items-center mb-6">
               <h3 className="text-lg font-bold text-black">Create New Request</h3>
               <button
@@ -203,10 +218,47 @@ export const RequestsPanel: React.FC = () => {
                 )}
               </div>
 
+              {/* Design Enhancer Toggle */}
+              <div className="flex items-center justify-between">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Design Request Enhancer
+                  </label>
+                  <p className="text-xs text-gray-500 mt-1">
+                    Help us understand your design preferences (optional)
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowEnhancer(!showEnhancer)}
+                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                    showEnhancer ? 'bg-purple-600' : 'bg-gray-200'
+                  }`}
+                >
+                  <span
+                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                      showEnhancer ? 'translate-x-6' : 'translate-x-1'
+                    }`}
+                  />
+                </button>
+              </div>
+
+              {/* Design Enhancer */}
+              {showEnhancer && (
+                <DesignEnhancer
+                  onSelectionsChange={setEnhancerSelections}
+                  initialSelections={enhancerSelections}
+                />
+              )}
+
               <div className="flex justify-end space-x-3 pt-4">
                 <button
                   type="button"
-                  onClick={() => setShowCreateForm(false)}
+                  onClick={() => {
+                    setShowCreateForm(false);
+                    setShowEnhancer(false);
+                    setEnhancerSelections({});
+                  }}
                   className="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors"
                 >
                   Cancel

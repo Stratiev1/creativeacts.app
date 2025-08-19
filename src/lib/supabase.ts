@@ -123,6 +123,90 @@ export type Database = {
           deleted_at?: string | null;
         };
       };
+      design_enhancer_categories: {
+        Row: {
+          id: string;
+          name: string;
+          slug: string;
+          description: string | null;
+          is_active: boolean;
+          sort_order: number;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          name: string;
+          slug: string;
+          description?: string | null;
+          is_active?: boolean;
+          sort_order?: number;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          name?: string;
+          slug?: string;
+          description?: string | null;
+          is_active?: boolean;
+          sort_order?: number;
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
+      design_enhancer_options: {
+        Row: {
+          id: string;
+          category_id: string;
+          name: string;
+          description: string | null;
+          image_url: string | null;
+          is_active: boolean;
+          sort_order: number;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          category_id: string;
+          name: string;
+          description?: string | null;
+          image_url?: string | null;
+          is_active?: boolean;
+          sort_order?: number;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          category_id?: string;
+          name?: string;
+          description?: string | null;
+          image_url?: string | null;
+          is_active?: boolean;
+          sort_order?: number;
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
+      request_enhancer_selections: {
+        Row: {
+          id: string;
+          request_id: string;
+          category_id: string;
+          option_id: string;
+          created_at: string;
+        };
+        Insert: {
+          request_id: string;
+          category_id: string;
+          option_id: string;
+          created_at?: string;
+        };
+        Update: {
+          request_id?: string;
+          category_id?: string;
+          option_id?: string;
+          created_at?: string;
+        };
+      };
     };
     Views: {
       stripe_user_subscriptions: {
