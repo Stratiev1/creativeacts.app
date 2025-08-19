@@ -71,10 +71,6 @@ export const SubscriptionsPanel: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold text-primary-black">Subscriptions</h2>
-      </div>
-
       {/* Current Subscription */}
       {subscription && subscription.subscription_status !== 'not_started' ? (
         <div className="bg-primary-grey rounded-xl p-6">

@@ -33,14 +33,6 @@ export const BuyProductPanel: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold text-black">Products & Services</h2>
-          <p className="text-gray-600 mt-1">Choose from our professional design services</p>
-        </div>
-        <ShoppingBag className="h-8 w-8 text-gray-400" />
-      </div>
-
       {error && (
         <div className="bg-red-50 border border-red-200 rounded-md p-4 flex items-center">
           <AlertCircle className="h-5 w-5 text-red-500 mr-3 flex-shrink-0" />

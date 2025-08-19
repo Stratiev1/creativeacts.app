@@ -49,8 +49,6 @@ export const AdminRequestsPanel: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl font-bold text-black">Requests</h2>
-
       {/* View Mode Tabs */}
       <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg overflow-x-auto">
         {(['current', 'finished'] as ViewMode[]).map((mode) => (

@@ -19,8 +19,6 @@ export const ClientsPanel: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl font-bold text-black">Clients</h2>
-
       {/* Clients List */}
       <div className="grid gap-4">
         {clients.map((client) => (
