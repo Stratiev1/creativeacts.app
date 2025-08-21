@@ -1,354 +1,424 @@
 import React, { useState } from 'react';
-import { useAuth } from '../contexts/AuthContext';
-import { useSubscription } from '../hooks/useSubscription';
-import { LogOut, User, Menu, X, MessageSquare, FileText, Users, FolderOpen, CreditCard, Settings, ShoppingBag, Receipt, Home } from 'lucide-react';
+import { useAuth } from '../../contexts/AuthContext';
+import { User, Mail, Lock, Camera, Bell, MessageSquare, FileText, CreditCard, Shield } from 'lucide-react';
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { cn } from "@/lib/utils";
 
-interface LayoutProps {
-  children: React.ReactNode;
-  title: string;
-  activeTab?: string;
-  onTabChange?: (tab: string) => void;
-  showSidebar?: boolean;
-}
+export const SettingsPanel: React.FC = () => {
+  const { user } = useAuth();
+  const [formData, setFormData] = useState({
+    name: user?.user_metadata?.name || '',
+    email: user?.email || '',
+    phone: user?.user_metadata?.phone || '',
+    company: user?.user_metadata?.company || '',
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: ''
+  });
+  
+  const [notifications, setNotifications] = useState({
+    emailNotifications: true,
+    pushNotifications: true,
+    requestUpdates: true,
+    chatMessages: true,
+    billingAlerts: true,
+    marketingEmails: false,
+    weeklyDigest: true,
+    projectDeadlines: true
+  });
+  
+  const [success, setSuccess] = useState('');
 
-export const Layout: React.FC<LayoutProps> = ({ 
-  children, 
-  title, 
-  activeTab, 
-  onTabChange,
-  showSidebar = true 
-}) => {
-  const { user, signOut } = useAuth();
-  const { subscription } = useSubscription();
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
-  const isAdmin = user?.user_metadata?.role === 'admin';
-
-  const adminTabs = [
-    { id: 'clients', label: 'Clients', icon: Users },
-    { id: 'requests', label: 'Requests', icon: FileText },
-    { id: 'chat', label: 'Chat', icon: MessageSquare }
-  ];
-
-  const clientTabs = [
-    { id: 'requests', label: 'Requests', icon: FileText },
-    { id: 'chat', label: 'Chat', icon: MessageSquare },
-    { id: 'assets', label: 'Assets', icon: FolderOpen },
-    { id: 'subscriptions', label: 'Subscriptions', icon: CreditCard },
-    { id: 'buy', label: 'Buy Product', icon: ShoppingBag },
-    { id: 'billing', label: 'Billing', icon: Receipt },
-    { id: 'settings', label: 'Settings', icon: Settings }
-  ];
-
-  const tabs = isAdmin ? adminTabs : clientTabs;
-
-  const handleTabClick = (tabId: string) => {
-    if (onTabChange) {
-      onTabChange(tabId);
-    }
-    setMobileMenuOpen(false);
+  const handleProfileUpdate = (e: React.FormEvent) => {
+    e.preventDefault();
+    // Simulate API call
+    setTimeout(() => {
+      setSuccess('Profile updated successfully!');
+      setTimeout(() => setSuccess(''), 3000);
+    }, 500);
   };
 
-  const getSubscriptionDisplay = () => {
-    if (!subscription || subscription.subscription_status === 'not_started') {
-      return 'No active plan';
+  const handlePasswordUpdate = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (formData.newPassword !== formData.confirmPassword) {
+      alert('New passwords do not match');
+      return;
     }
-    
-    if (subscription.subscription_status === 'active' || subscription.subscription_status === 'trialing') {
-      return subscription.product_name || 'Active subscription';
-    }
-    
-    return `${subscription.subscription_status.replace('_', ' ')}`;
+    // Simulate API call
+    setTimeout(() => {
+      setSuccess('Password updated successfully!');
+      setFormData(prev => ({
+        ...prev,
+        currentPassword: '',
+        newPassword: '',
+        confirmPassword: ''
+      }));
+      setTimeout(() => setSuccess(''), 3000);
+    }, 500);
+  };
+
+  const handleNotificationUpdate = (e: React.FormEvent) => {
+    e.preventDefault();
+    // Simulate API call
+    setTimeout(() => {
+      setSuccess('Notification preferences updated successfully!');
+      setTimeout(() => setSuccess(''), 3000);
+    }, 500);
+  };
+
+  const handleAvatarUpload = () => {
+    alert('This would open a file picker to upload a new profile picture');
+  };
+
+  const handleNotificationChange = (key: keyof typeof notifications) => {
+    setNotifications(prev => ({
+      ...prev,
+      [key]: !prev[key]
+    }));
   };
 
   return (
-    <div className="min-h-screen bg-background flex">
-      {/* Desktop Sidebar */}
-      {showSidebar && (
-        <div className={cn(
-          "hidden lg:flex flex-col bg-card border-r transition-all duration-300",
-          sidebarCollapsed ? "w-16" : "w-64"
-        )}>
-          {/* Sidebar Header */}
-          <div className="p-6 border-b">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-              <div className="flex items-center space-x-2">
-              <div className={cn(
-                "flex items-center",
-                sidebarCollapsed ? "justify-center" : "space-x-3"
-              )}>
-                <img src="/logo.svg" alt="Creative Acts" className="h-8 w-8 flex-shrink-0" />
-                {!sidebarCollapsed && (
-                  <span className="font-semibold text-foreground">Creative Acts</span>
-                )}
+    <div className="space-y-8">
+      {success && (
+        <div className="bg-green-50 border border-green-200 rounded-md p-4">
+          <p className="text-sm text-green-700">{success}</p>
+        </div>
+      )}
+
+      {/* Profile Information */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center space-x-2">
+            <User className="h-5 w-5" />
+            <span>Profile Information</span>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+        
+        <form onSubmit={handleProfileUpdate} className="space-y-6">
+          {/* Avatar */}
+          <div className="flex items-center space-x-4">
+            <Avatar className="h-20 w-20">
+              <AvatarImage src={user?.avatar} alt={user?.user_metadata?.name} />
+              <AvatarFallback>
+                <User className="h-8 w-8" />
+              </AvatarFallback>
+            </Avatar>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={handleAvatarUpload}
+            >
+              <Camera className="h-4 w-4 mr-2" />
+              Change Photo
+            </Button>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Name */}
+            <div>
+              <Label htmlFor="name">Full Name</Label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <User className="h-4 w-4 text-muted-foreground" />
+                </div>
+                <Input
+                  id="name"
+                  type="text"
+                  value={formData.name}
+                  onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+                  className="pl-10"
+                />
               </div>
-              {!sidebarCollapsed && (
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => setSidebarCollapsed(true)}
-                >
-                  <X className="h-4 w-4" />
-                </Button>
-              )}
             </div>
-          </div>
 
-          {/* Expand button when collapsed */}
-          {sidebarCollapsed && (
-            <div className="p-2 border-b">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setSidebarCollapsed(false)}
-                className="w-full"
-              >
-                <Menu className="h-4 w-4" />
-              </Button>
-            </div>
-          )}
-
-          {/* Navigation */}
-          <nav className="flex-1 p-4">
-            <div className="space-y-1">
-              {tabs.map((tab) => {
-                const IconComponent = tab.icon;
-                const isActive = activeTab === tab.id;
-                return (
-                  <Button
-                    key={tab.id}
-                    variant={isActive ? "secondary" : "ghost"}
-                    className={cn(
-                      "w-full justify-start",
-                      sidebarCollapsed && "justify-center px-2"
-                    )}
-                    onClick={() => handleTabClick(tab.id)}
-                    title={sidebarCollapsed ? tab.label : undefined}
-                  >
-                    <IconComponent className="h-4 w-4 flex-shrink-0" />
-                    {!sidebarCollapsed && <span className="ml-3">{tab.label}</span>}
-                  </Button>
-                );
-              })}
-            </div>
-          </nav>
-
-          <Separator />
-
-          {/* User Section */}
-          <div className="p-4">
-            <div className={cn(
-              "flex items-center",
-              sidebarCollapsed ? "justify-center" : "space-x-3 mb-3"
-            )}>
-              <Avatar className="h-8 w-8">
-                <AvatarFallback>
-                  <User className="h-4 w-4" />
-                </AvatarFallback>
-              </Avatar>
-              {!sidebarCollapsed && (
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-foreground truncate">
-                    {user?.user_metadata?.name || user?.email}
-                  </p>
-                  <p className="text-xs text-muted-foreground truncate">
-                    {getSubscriptionDisplay()}
-                {!sidebarCollapsed && (
-                {!sidebarCollapsed && (
-                  <span className="font-semibold text-foreground">Creative Acts</span>
-                )}
+            {/* Email */}
+            <div>
+              <Label htmlFor="email">Email Address</Label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <Mail className="h-4 w-4 text-muted-foreground" />
+                </div>
+                <Input
+                  id="email"
+                  type="email"
+                  value={formData.email}
+                  onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
+                  className="pl-10"
+                />
               </div>
-              {!sidebarCollapsed && (
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => setSidebarCollapsed(true)}
-                >
-                  <X className="h-4 w-4" />
-                </Button>
-              )}
+            </div>
+
+            {/* Phone */}
+            <div>
+              <Label htmlFor="phone">Phone Number</Label>
+              <Input
+                id="phone"
+                type="tel"
+                value={formData.phone}
+                onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
+              />
+            </div>
+
+            {/* Company */}
+            <div>
+              <Label htmlFor="company">Company Name</Label>
+              <Input
+                id="company"
+                type="text"
+                value={formData.company}
+                onChange={(e) => setFormData(prev => ({ ...prev, company: e.target.value }))}
+              />
             </div>
           </div>
 
-          {/* Expand button when collapsed */}
-          {sidebarCollapsed && (
-            <div className="p-2 border-b border-border">
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => setSidebarCollapsed(true)}
-                onClick={() => setSidebarCollapsed(false)}
-                className="w-full"
-                  <X className="h-4 w-4" />
-                <Menu className="h-4 w-4" />
-              )}
-              <Button
-                variant="ghost"
-                size="sm"
-                className="w-full justify-start"
-                onClick={signOut}
-              >
-                <LogOut className="h-4 w-4 mr-2" />
-                Sign out
-              </Button>
-                  <Moon className="h-8 w-8 text-blue-500 mb-2" />
-                  <span className="font-medium">Dark</span>
-                  <span className="text-xs text-muted-foreground mt-1">Always dark theme</span>
-                </CardContent>
-              </Card>
-
-              <Card 
-                className={`cursor-pointer transition-all ${
-                  theme === 'system' ? 'ring-2 ring-primary' : 'hover:shadow-md'
-                }`}
-                onClick={() => setTheme('system')}
-              >
-                <CardContent className="flex flex-col items-center justify-center p-6">
-                  <Monitor className="h-8 w-8 text-gray-500 mb-2" />
-                  <span className="font-medium">System</span>
-                  <span className="text-xs text-muted-foreground mt-1">Follow device setting</span>
-                </CardContent>
-              </Card>
-            </div>
-            
-            <div className="text-sm text-muted-foreground">
-              Current theme: <span className="font-medium capitalize">{theme}</span>
-              {theme === 'system' && (
-                <span className="ml-2 text-xs">
-                  (Currently using {window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'} mode)
-                </span>
-              )}
-            </div>
+          <div className="flex justify-end">
+            <Button
+              type="submit"
+            >
+              Update Profile
+            </Button>
           </div>
+        </form>
         </CardContent>
       </Card>
 
-            {/* Mobile Navigation */}
-            <nav className="flex-1 p-4">
-              <div className="space-y-1">
-                {tabs.map((tab) => {
-                  const IconComponent = tab.icon;
-                  const isActive = activeTab === tab.id;
-                  return (
-                    <Button
-                      key={tab.id}
-                      variant={isActive ? "secondary" : "ghost"}
-                      className="w-full justify-start"
-                      onClick={() => handleTabClick(tab.id)}
-                    >
-                      <IconComponent className="h-4 w-4 mr-3" />
-                      {tab.label}
-                    </Button>
-                  );
-                })}
+      {/* Security Settings */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center space-x-2">
+            <Shield className="h-5 w-5" />
+            <span>Security Settings</span>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+        
+        <form onSubmit={handlePasswordUpdate} className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* Current Password */}
+            <div>
+              <label htmlFor="currentPassword" className="block text-sm font-medium text-gray-700 mb-2">
+                Current Password
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <Lock className="h-4 w-4 text-gray-400" />
+                </div>
+                <input
+                  id="currentPassword"
+                  type="password"
+                  value={formData.currentPassword}
+                  onChange={(e) => setFormData(prev => ({ ...prev, currentPassword: e.target.value }))}
+                  className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-orange focus:border-transparent"
+                  required
+                />
               </div>
-            </nav>
+            </div>
+
+            {/* New Password */}
+            <div>
+              <label htmlFor="newPassword" className="block text-sm font-medium text-gray-700 mb-2">
+                New Password
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <Lock className="h-4 w-4 text-gray-400" />
+                </div>
+                <input
+                  id="newPassword"
+                  type="password"
+                  value={formData.newPassword}
+                  onChange={(e) => setFormData(prev => ({ ...prev, newPassword: e.target.value }))}
+                  className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-orange focus:border-transparent"
+                  required
+                />
+              </div>
+            </div>
+
+            {/* Confirm Password */}
+            <div>
+              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
+                Confirm New Password
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <Lock className="h-4 w-4 text-gray-400" />
+                </div>
+                <input
+                  id="confirmPassword"
+                  type="password"
+                  value={formData.confirmPassword}
+                  onChange={(e) => setFormData(prev => ({ ...prev, confirmPassword: e.target.value }))}
+                  className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-orange focus:border-transparent"
+                  required
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="flex justify-end">
+            <Button
+              type="submit"
+            >
+              Update Password
+            </Button>
+          </div>
+        </form>
+        </CardContent>
+      </Card>
+
+      {/* Notification Settings */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center space-x-2">
+            <Bell className="h-5 w-5" />
+            <span>Notification Preferences</span>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+        
+        <form onSubmit={handleNotificationUpdate} className="space-y-6">
+          <div className="space-y-6">
+            <div>
+              <h4 className="font-medium text-foreground mb-4">General</h4>
+              <div className="space-y-4">
+              
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <Mail className="h-4 w-4 text-muted-foreground" />
+                    <div>
+                      <p className="text-sm font-medium text-foreground">Email Notifications</p>
+                      <p className="text-xs text-muted-foreground">Receive notifications via email</p>
+                    </div>
+                  </div>
+                  <Switch
+                    checked={notifications.emailNotifications}
+                    onCheckedChange={() => handleNotificationChange('emailNotifications')}
+                  />
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <Bell className="h-4 w-4 text-muted-foreground" />
+                    <div>
+                      <p className="text-sm font-medium text-foreground">Push Notifications</p>
+                      <p className="text-xs text-muted-foreground">Receive browser notifications</p>
+                    </div>
+                  </div>
+                  <Switch
+                    checked={notifications.pushNotifications}
+                    onCheckedChange={() => handleNotificationChange('pushNotifications')}
+                  />
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <Mail className="h-4 w-4 text-muted-foreground" />
+                    <div>
+                      <p className="text-sm font-medium text-foreground">Weekly Digest</p>
+                      <p className="text-xs text-muted-foreground">Weekly summary of your activity</p>
+                    </div>
+                  </div>
+                  <Switch
+                    checked={notifications.weeklyDigest}
+                    onCheckedChange={() => handleNotificationChange('weeklyDigest')}
+                  />
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <Mail className="h-4 w-4 text-muted-foreground" />
+                    <div>
+                      <p className="text-sm font-medium text-foreground">Marketing Emails</p>
+                      <p className="text-xs text-muted-foreground">Product updates and promotions</p>
+                    </div>
+                  </div>
+                  <Switch
+                    checked={notifications.marketingEmails}
+                    onCheckedChange={() => handleNotificationChange('marketingEmails')}
+                  />
+                </div>
+              </div>
+            </div>
 
             <Separator />
 
-            {/* Mobile User Section */}
-            <div className="p-4">
-              <div className="flex items-center space-x-3 mb-3">
-                <Avatar className="h-8 w-8">
-                  <AvatarFallback>
-                    <User className="h-4 w-4" />
-                  </AvatarFallback>
-                </Avatar>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-foreground truncate">
-                    {user?.user_metadata?.name || user?.email}
-                  </p>
-                  <p className="text-xs text-muted-foreground truncate">
-                    {getSubscriptionDisplay()}
-                  </p>
+            <div>
+              <h4 className="font-medium text-foreground mb-4">Project Updates</h4>
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <FileText className="h-4 w-4 text-muted-foreground" />
+                    <div>
+                      <p className="text-sm font-medium text-foreground">Request Updates</p>
+                      <p className="text-xs text-muted-foreground">Status changes on your requests</p>
+                    </div>
+                  </div>
+                  <Switch
+                    checked={notifications.requestUpdates}
+                    onCheckedChange={() => handleNotificationChange('requestUpdates')}
+                  />
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <MessageSquare className="h-4 w-4 text-muted-foreground" />
+                    <div>
+                      <p className="text-sm font-medium text-foreground">Chat Messages</p>
+                      <p className="text-xs text-muted-foreground">New messages from our team</p>
+                    </div>
+                  </div>
+                  <Switch
+                    checked={notifications.chatMessages}
+                    onCheckedChange={() => handleNotificationChange('chatMessages')}
+                  />
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <FileText className="h-4 w-4 text-muted-foreground" />
+                    <div>
+                      <p className="text-sm font-medium text-foreground">Project Deadlines</p>
+                      <p className="text-xs text-muted-foreground">Reminders about project milestones</p>
+                    </div>
+                  </div>
+                  <Switch
+                    checked={notifications.projectDeadlines}
+                    onCheckedChange={() => handleNotificationChange('projectDeadlines')}
+                  />
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <CreditCard className="h-4 w-4 text-muted-foreground" />
+                    <div>
+                      <p className="text-sm font-medium text-foreground">Billing Alerts</p>
+                      <p className="text-xs text-muted-foreground">Payment and subscription updates</p>
+                    </div>
+                  </div>
+                  <Switch
+                    checked={notifications.billingAlerts}
+                    onCheckedChange={() => handleNotificationChange('billingAlerts')}
+                  />
                 </div>
               </div>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="w-full justify-start"
-                onClick={signOut}
-              >
-                <LogOut className="h-4 w-4 mr-2" />
-                Sign out
-              </Button>
             </div>
           </div>
-        </div>
-      )}
 
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col min-w-0">
-        {/* Top Header */}
-        <header className="sticky top-0 z-30 bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/60 border-b px-4 py-3 lg:px-6">
-          <div className="w-full max-w-[1400px] mx-auto flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              {showSidebar && (
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => setMobileMenuOpen(true)}
-                  className="lg:hidden"
-                >
-                  <Menu className="h-4 w-4" />
-                </Button>
-              )}
-              <h1 className="text-xl font-semibold text-foreground">{title}</h1>
-            </div>
-            
-            {/* Mobile User Menu */}
-            <div className="lg:hidden">
-              <Avatar className="h-8 w-8">
-                <AvatarFallback>
-                  <User className="h-4 w-4" />
-                </AvatarFallback>
-              </Avatar>
-            </div>
+          <div className="flex justify-end">
+            <Button
+              type="submit"
+            >
+              Update Notifications
+            </Button>
           </div>
-        </header>
-
-        {/* Content Area */}
-        <main className="flex-1 h-full overflow-auto">
-          <div className="w-full h-full max-w-[1400px] mx-auto px-4 py-6 lg:px-6">
-            {children}
-          </div>
-        </main>
-      </div>
-
-      {/* Mobile Bottom Navigation */}
-      {showSidebar && (
-        <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/60 border-t px-2 py-2 z-40">
-          <div className="flex justify-around items-center max-w-md mx-auto">
-            {tabs.slice(0, 5).map((tab) => {
-              const IconComponent = tab.icon;
-              const isActive = activeTab === tab.id;
-              return (
-                <Button
-                  key={tab.id}
-                  variant="ghost"
-                  size="sm"
-                  className={cn(
-                    "flex flex-col items-center justify-center h-auto py-2 px-3 min-w-0 space-y-1",
-                    isActive && "text-primary bg-secondary"
-                  )}
-                  onClick={() => handleTabClick(tab.id)}
-                >
-                  <IconComponent className="h-4 w-4" />
-                  <span className="text-xs font-medium truncate max-w-[60px]">
-                    {tab.label}
-                  </span>
-                </Button>
-              );
-            })}
-          </div>
-        </div>
-      )}
+        </form>
+        </CardContent>
+      </Card>
     </div>
   );
 };
