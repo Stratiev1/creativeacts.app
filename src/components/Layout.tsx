@@ -99,7 +99,7 @@ export const Layout: React.FC<LayoutProps> = ({
                         isActive
                           ? 'bg-primary-orange text-primary-white shadow-lg'
                           : 'text-gray-700 hover:bg-primary-grey'
-                      }`}
+                      } ${sidebarCollapsed ? 'justify-center px-3' : ''}`}
                       title={sidebarCollapsed ? tab.label : undefined}
                     >
                       <IconComponent className="h-5 w-5 flex-shrink-0" />
