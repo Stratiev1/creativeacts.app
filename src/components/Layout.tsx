@@ -97,7 +97,7 @@ export const Layout: React.FC<LayoutProps> = ({
                 <Menu className="h-5 w-5 text-gray-600" />
               </button>
             </div>
-          </div>
+          )}
 
           {/* Navigation */}
           <nav className="flex-1 p-4">
