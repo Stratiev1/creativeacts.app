@@ -46,7 +46,9 @@ export const AdminDashboard: React.FC = () => {
       activeTab={activeTab} 
       onTabChange={setActiveTab}
     >
-      {renderActivePanel()}
+      <div className={activeTab === 'assets' ? 'h-[calc(100vh-140px)] -mx-4 lg:-mx-6 -my-6' : ''}>
+        {renderActivePanel()}
+      </div>
     </Layout>
   );
 };
