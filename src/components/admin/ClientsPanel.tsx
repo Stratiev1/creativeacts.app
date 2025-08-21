@@ -2,6 +2,10 @@ import React, { useState } from 'react';
 import { useData } from '../../contexts/DataContext';
 import { ClientDetailPage } from './ClientDetailPage';
 import { User, MessageSquare, FileText, ShoppingBag, Calendar } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 
 export const ClientsPanel: React.FC = () => {
   const { clients } = useData();
@@ -22,66 +26,63 @@ export const ClientsPanel: React.FC = () => {
       {/* Clients List */}
       <div className="grid gap-4">
         {clients.map((client) => (
-          <div 
+          <Card 
             key={client.id} 
-            className="bg-gray-50 rounded-lg p-6 cursor-pointer hover:bg-gray-100 transition-colors"
+            className="cursor-pointer hover:shadow-md transition-shadow"
             onClick={() => setSelectedClient(client.id)}
           >
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-4">
-                <div className="w-12 h-12 bg-gray-200 rounded-full overflow-hidden">
-                  {client.avatar ? (
-                    <img 
-                      src={client.avatar} 
-                      alt={client.name}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center">
-                      <User className="h-6 w-6 text-gray-600" />
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-4">
+                  <Avatar className="h-12 w-12">
+                    <AvatarImage src={client.avatar} alt={client.name} />
+                    <AvatarFallback>
+                      <User className="h-6 w-6" />
+                    </AvatarFallback>
+                  </Avatar>
+                  
+                  <div className="flex-1">
+                    <h3 className="text-lg font-semibold text-foreground">{client.name}</h3>
+                    <p className="text-muted-foreground">{client.email}</p>
+                    <div className="flex items-center space-x-4 text-sm text-muted-foreground mt-1">
+                      <span>{client.totalRequests} requests</span>
+                      <span>{client.totalOrders} orders</span>
+                      <span>Joined {new Date(client.joinedAt).toLocaleDateString()}</span>
                     </div>
-                  )}
-                </div>
-                
-                <div className="flex-1">
-                  <h3 className="text-lg font-semibold text-black">{client.name}</h3>
-                  <p className="text-gray-600">{client.email}</p>
-                  <div className="flex items-center space-x-4 text-sm text-gray-500 mt-1">
-                    <span>{client.totalRequests} requests</span>
-                    <span>{client.totalOrders} orders</span>
-                    <span>Joined {new Date(client.joinedAt).toLocaleDateString()}</span>
                   </div>
                 </div>
+
+                <div className="flex space-x-3">
+                  <Button
+                    variant="outline"
+                    onClick={(e) => { e.stopPropagation(); handleStartChat(client.id, client.name); }}
+                  >
+                    <MessageSquare className="h-4 w-4 mr-2" />
+                    Chat
+                  </Button>
+                </div>
               </div>
 
-              <div className="flex space-x-3">
-                <button
-                  onClick={(e) => { e.stopPropagation(); handleStartChat(client.id, client.name); }}
-                  className="inline-flex items-center px-3 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-100 transition-colors"
-                >
-                  <MessageSquare className="h-4 w-4 mr-1" />
-                  Chat
-                </button>
-              </div>
-            </div>
-
-            {/* Quick Info */}
-            <div className="mt-4 pt-4 border-t border-gray-200">
-              <div className="flex items-center space-x-4">
-                {client.subscriptions.length > 0 && (
-                  <span className="inline-flex px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">
-                    {client.subscriptions[0]}
+              {/* Quick Info */}
+              <div className="mt-4 pt-4 border-t">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    {client.subscriptions.length > 0 && (
+                      <Badge variant="secondary">
+                        {client.subscriptions[0]}
+                      </Badge>
+                    )}
+                    <span className="text-xs text-muted-foreground">
+                      Last activity: {new Date().toLocaleDateString()}
+                    </span>
+                  </div>
+                  <span className="text-xs text-muted-foreground">
+                    Click to view details
                   </span>
-                )}
-                <span className="text-xs text-gray-500">
-                  Last activity: {new Date().toLocaleDateString()}
-                </span>
-                <span className="text-xs text-gray-500">
-                  Click to view details
-                </span>
+                </div>
               </div>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
         ))}
       </div>
     </div>

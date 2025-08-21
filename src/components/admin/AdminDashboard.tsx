@@ -3,11 +3,16 @@ import { Layout } from '../Layout';
 import { ClientsPanel } from './ClientsPanel';
 import { AdminRequestsPanel } from './AdminRequestsPanel';
 import { AdminChatPanel } from './AdminChatPanel';
+import { AssetsPanel } from './AssetsPanel';
+import { useAuth } from '../../contexts/AuthContext';
+import { LogOut, User, Menu, X } from 'lucide-react';
 
 type ActiveTab = 'clients' | 'requests' | 'chat';
 
 export const AdminDashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState<ActiveTab>('clients');
+  const { user, signOut } = useAuth();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const renderActivePanel = () => {
     switch (activeTab) {
@@ -41,7 +46,9 @@ export const AdminDashboard: React.FC = () => {
       activeTab={activeTab} 
       onTabChange={setActiveTab}
     >
-      {renderActivePanel()}
+      <div className={activeTab === 'assets' ? 'h-[calc(100vh-140px)] -mx-4 lg:-mx-6 -my-6' : ''}>
+        {renderActivePanel()}
+      </div>
     </Layout>
   );
 };

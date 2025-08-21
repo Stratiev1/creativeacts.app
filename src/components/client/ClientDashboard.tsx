@@ -7,11 +7,15 @@ import { SettingsPanel } from './SettingsPanel';
 import { BuyProductPanel } from './BuyProductPanel';
 import { BillingPanel } from './BillingPanel';
 import { AssetsPanel } from './AssetsPanel';
+import { useAuth } from '../../contexts/AuthContext';
+import { LogOut, User, Menu, X } from 'lucide-react';
 
 type ActiveTab = 'requests' | 'chat' | 'assets' | 'subscriptions' | 'settings' | 'buy' | 'billing';
 
 export const ClientDashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState<ActiveTab>('requests');
+  const { user, signOut } = useAuth();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const renderActivePanel = () => {
     switch (activeTab) {
@@ -55,13 +59,16 @@ export const ClientDashboard: React.FC = () => {
     }
   };
 
+
   return (
     <Layout 
       title={getPageTitle()}
       activeTab={activeTab} 
       onTabChange={setActiveTab}
     >
-      {renderActivePanel()}
+      <div className={activeTab === 'assets' ? 'h-[calc(100vh-140px)] -mx-4 lg:-mx-6 -my-6' : ''}>
+        {renderActivePanel()}
+      </div>
     </Layout>
   );
 };

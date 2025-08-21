@@ -1,7 +1,11 @@
 import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useSubscription } from '../hooks/useSubscription';
-import { LogOut, User, Menu, X, MessageSquare, FileText, Users, FolderOpen, CreditCard, Settings, ShoppingBag, Receipt, Home } from 'lucide-react';
+import { LogOut, User, Menu, X, MessageSquare, FileText, Users, FolderOpen, CreditCard, Settings, ShoppingBag, Receipt } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Separator } from "@/components/ui/separator";
+import { cn } from "@/lib/utils";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -63,149 +67,182 @@ export const Layout: React.FC<LayoutProps> = ({
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
+    <div className="min-h-screen bg-background flex">
       {/* Desktop Sidebar */}
       {showSidebar && (
-        <div className={`hidden lg:flex flex-col bg-primary-white border-r border-gray-200 transition-all duration-300 ${
-          sidebarCollapsed ? 'w-16' : 'w-64'
-        }`}>
+        <div className={cn(
+          "hidden lg:flex flex-col bg-card border-r transition-all duration-300",
+          sidebarCollapsed ? "w-16" : "w-64"
+        )}>
           {/* Sidebar Header */}
-          <div className="flex items-center justify-between p-4 border-b border-gray-200">
-            {!sidebarCollapsed && (
+          <div className="p-6 border-b border-border">
+            <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
-                <img src="/logo.svg" alt="Creative Acts" className="h-8" />
-                <span className="font-semibold text-primary-black">Creative Acts</span>
+                <img src="/logo.svg" alt="Creative Acts" className="h-8 flex-shrink-0" />
+                {!sidebarCollapsed && (
+                  <span className="font-semibold text-foreground">Creative Acts</span>
+                )}
               </div>
-            )}
-            <button
-              onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-              className="p-1 rounded-md hover:bg-primary-grey transition-colors"
-            >
-              <Menu className="h-5 w-5 text-gray-600" />
-            </button>
+              {!sidebarCollapsed && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setSidebarCollapsed(true)}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              )}
+            </div>
           </div>
+
+          {/* Expand button when collapsed */}
+          {sidebarCollapsed && (
+            <div className="p-2 border-b border-border">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setSidebarCollapsed(false)}
+                className="w-full"
+              >
+                <Menu className="h-4 w-4" />
+              </Button>
+            </div>
+          )}
 
           {/* Navigation */}
           <nav className="flex-1 p-4">
-            <ul className="space-y-2">
+            <div className="space-y-1">
               {tabs.map((tab) => {
                 const IconComponent = tab.icon;
                 const isActive = activeTab === tab.id;
                 return (
-                  <li key={tab.id}>
-                    <button
-                      onClick={() => handleTabClick(tab.id)}
-                      className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 ${
-                        isActive
-                          ? 'bg-primary-orange text-primary-white shadow-lg'
-                          : 'text-gray-700 hover:bg-primary-grey'
-                      }`}
-                      title={sidebarCollapsed ? tab.label : undefined}
-                    >
-                      <IconComponent className="h-5 w-5 flex-shrink-0" />
-                      {!sidebarCollapsed && <span className="ml-3">{tab.label}</span>}
-                    </button>
-                  </li>
+                  <Button
+                    key={tab.id}
+                    variant={isActive ? "secondary" : "ghost"}
+                    className={cn(
+                      "w-full justify-start",
+                      sidebarCollapsed && "justify-center px-2"
+                    )}
+                    onClick={() => handleTabClick(tab.id)}
+                    title={sidebarCollapsed ? tab.label : undefined}
+                  >
+                    <IconComponent className="h-4 w-4 flex-shrink-0" />
+                    {!sidebarCollapsed && <span className="ml-3">{tab.label}</span>}
+                  </Button>
                 );
               })}
-            </ul>
+            </div>
           </nav>
 
+          <Separator />
+
           {/* User Section */}
-          <div className="p-4 border-t border-gray-200">
-            <div className={`flex items-center ${sidebarCollapsed ? 'justify-center' : 'space-x-3'}`}>
-              <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center overflow-hidden flex-shrink-0">
-                <User className="h-4 w-4 text-gray-600" />
-              </div>
+          <div className="p-4">
+            <div className={cn(
+              "flex items-center",
+              sidebarCollapsed ? "justify-center" : "space-x-3 mb-3"
+            )}>
+              <Avatar className="h-8 w-8">
+                <AvatarFallback>
+                  <User className="h-4 w-4" />
+                </AvatarFallback>
+              </Avatar>
               {!sidebarCollapsed && (
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-primary-black truncate">
+                  <p className="text-sm font-medium text-foreground truncate">
                     {user?.user_metadata?.name || user?.email}
                   </p>
-                  <p className="text-xs text-gray-500 truncate">
+                  <p className="text-xs text-muted-foreground truncate">
                     {getSubscriptionDisplay()}
                   </p>
                 </div>
               )}
             </div>
             {!sidebarCollapsed && (
-              <button
+              <Button
+                variant="ghost"
+                size="sm"
+                className="w-full justify-start"
                 onClick={signOut}
-                className="w-full mt-3 flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-primary-grey rounded-lg transition-colors"
               >
-                <LogOut className="h-4 w-4 mr-3" />
-                Logout
-              </button>
+                <LogOut className="h-4 w-4 mr-2" />
+                Sign out
+              </Button>
             )}
           </div>
         </div>
       )}
 
-      {/* Mobile Menu Overlay */}
-      {mobileMenuOpen && (
-        <div className="lg:hidden fixed inset-0 z-50 bg-primary-black bg-opacity-50" onClick={() => setMobileMenuOpen(false)}>
-          <div className="fixed inset-y-0 left-0 w-64 bg-primary-white shadow-xl" onClick={(e) => e.stopPropagation()}>
-            {/* Mobile Menu Header */}
-            <div className="flex items-center justify-between p-4 border-b border-gray-200">
-              <div className="flex items-center space-x-2">
-                <img src="/logo.svg" alt="Creative Acts" className="h-8" />
-                <span className="font-semibold text-primary-black">Creative Acts</span>
+      {/* Mobile Sidebar Overlay */}
+      {showSidebar && mobileMenuOpen && (
+        <div className="lg:hidden fixed inset-0 z-50 bg-background/80 backdrop-blur-sm">
+          <div className="fixed inset-y-0 left-0 w-64 bg-card border-r shadow-lg">
+            {/* Mobile Sidebar Header */}
+            <div className="p-6 border-b border-border">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <img src="/logo.svg" alt="Creative Acts" className="h-8 w-8 flex-shrink-0" />
+                  <span className="font-semibold text-foreground">Creative Acts</span>
+                </div>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
               </div>
-              <button
-                onClick={() => setMobileMenuOpen(false)}
-                className="p-1 rounded-md hover:bg-primary-grey transition-colors"
-              >
-                <X className="h-5 w-5 text-gray-600" />
-              </button>
             </div>
 
             {/* Mobile Navigation */}
             <nav className="flex-1 p-4">
-              <ul className="space-y-2">
+              <div className="space-y-1">
                 {tabs.map((tab) => {
                   const IconComponent = tab.icon;
                   const isActive = activeTab === tab.id;
                   return (
-                    <li key={tab.id}>
-                      <button
-                        onClick={() => handleTabClick(tab.id)}
-                        className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 ${
-                          isActive
-                            ? 'bg-primary-orange text-primary-white shadow-lg'
-                            : 'text-gray-700 hover:bg-primary-grey'
-                        }`}
-                      >
-                        <IconComponent className="h-5 w-5 mr-3" />
-                        {tab.label}
-                      </button>
-                    </li>
+                    <Button
+                      key={tab.id}
+                      variant={isActive ? "secondary" : "ghost"}
+                      className="w-full justify-start"
+                      onClick={() => handleTabClick(tab.id)}
+                    >
+                      <IconComponent className="h-4 w-4 mr-3" />
+                      {tab.label}
+                    </Button>
                   );
                 })}
-              </ul>
+              </div>
             </nav>
 
+            <Separator />
+
             {/* Mobile User Section */}
-            <div className="p-4 border-t border-gray-200">
+            <div className="p-4">
               <div className="flex items-center space-x-3 mb-3">
-                <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center overflow-hidden">
-                  <User className="h-4 w-4 text-gray-600" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-primary-black">
+                <Avatar className="h-8 w-8">
+                  <AvatarFallback>
+                    <User className="h-4 w-4" />
+                  </AvatarFallback>
+                </Avatar>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-foreground truncate">
                     {user?.user_metadata?.name || user?.email}
                   </p>
-                  <p className="text-xs text-gray-500">
+                  <p className="text-xs text-muted-foreground truncate">
                     {getSubscriptionDisplay()}
                   </p>
                 </div>
               </div>
-              <button
+              <Button
+                variant="ghost"
+                size="sm"
+                className="w-full justify-start"
                 onClick={signOut}
-                className="w-full flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-primary-grey rounded-lg transition-colors"
               >
-                <LogOut className="h-4 w-4 mr-3" />
-                Logout
-              </button>
+                <LogOut className="h-4 w-4 mr-2" />
+                Sign out
+              </Button>
             </div>
           </div>
         </div>
@@ -214,59 +251,64 @@ export const Layout: React.FC<LayoutProps> = ({
       {/* Main Content */}
       <div className="flex-1 flex flex-col min-w-0">
         {/* Top Header */}
-        <header className="sticky top-0 z-30 bg-primary-white border-b border-gray-200 px-4 py-3 lg:px-6 shadow-sm">
-          <div className="w-full max-w-[1300px] mx-auto flex items-center justify-between">
+        <header className="sticky top-0 z-30 bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/60 border-b border-border px-4 py-3 lg:px-6">
+          <div className="w-full max-w-[1400px] mx-auto flex items-center justify-between">
             <div className="flex items-center space-x-4">
               {showSidebar && (
-                <button
+                <Button
+                  variant="ghost"
+                  size="icon"
                   onClick={() => setMobileMenuOpen(true)}
-                  className="lg:hidden p-2 rounded-md hover:bg-primary-grey transition-colors"
+                  className="lg:hidden"
                 >
-                  <Menu className="h-5 w-5 text-gray-600" />
-                </button>
+                  <img src="/logo.svg" alt="Menu" className="h-6 w-6" />
+                </Button>
               )}
-              <h1 className="text-lg font-semibold text-primary-black">{title}</h1>
+              <h1 className="text-xl font-semibold text-foreground">{title}</h1>
             </div>
             
             {/* Mobile User Menu */}
-            <div className="lg:hidden flex items-center space-x-2">
-              <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center overflow-hidden">
-                <User className="h-4 w-4 text-gray-600" />
-              </div>
+            <div className="lg:hidden">
+              <Avatar className="h-8 w-8">
+                <AvatarFallback>
+                  <User className="h-4 w-4" />
+                </AvatarFallback>
+              </Avatar>
             </div>
           </div>
         </header>
 
         {/* Content Area */}
-        <main className="flex-1 overflow-auto pb-20 lg:pb-0">
-          <div className="w-full max-w-[1300px] mx-auto px-4 py-6 lg:px-6">
+        <main className="flex-1 h-full overflow-auto">
+          <div className="w-full h-full max-w-[1400px] mx-auto px-4 py-6 lg:px-6">
             {children}
           </div>
         </main>
       </div>
 
-      {/* Mobile Floating Navigation */}
+      {/* Mobile Bottom Navigation */}
       {showSidebar && (
-        <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-primary-white border-t border-gray-200 px-4 py-2 z-40 shadow-lg">
+        <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/60 border-t border-border px-2 py-2 z-40">
           <div className="flex justify-around items-center max-w-md mx-auto">
             {tabs.slice(0, 5).map((tab) => {
               const IconComponent = tab.icon;
               const isActive = activeTab === tab.id;
               return (
-                <button
+                <Button
                   key={tab.id}
+                  variant="ghost"
+                  size="sm"
+                  className={cn(
+                    "flex flex-col items-center justify-center h-auto py-2 px-3 min-w-0 space-y-1",
+                    isActive && "text-primary bg-secondary"
+                  )}
                   onClick={() => handleTabClick(tab.id)}
-                  className={`flex flex-col items-center justify-center p-3 rounded-xl transition-all duration-200 min-w-0 ${
-                    isActive
-                      ? 'bg-primary-orange text-primary-white shadow-md'
-                      : 'text-gray-500'
-                  }`}
                 >
-                  <IconComponent className={`h-5 w-5 mb-1 ${isActive ? 'text-primary-white' : 'text-gray-500'}`} />
-                  <span className={`text-xs font-medium truncate ${isActive ? 'text-primary-white' : 'text-gray-500'}`}>
+                  <IconComponent className="h-4 w-4" />
+                  <span className="text-xs font-medium truncate max-w-[60px]">
                     {tab.label}
                   </span>
-                </button>
+                </Button>
               );
             })}
           </div>

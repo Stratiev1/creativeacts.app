@@ -2,6 +2,10 @@ import React, { useState } from 'react';
 import { useData, Request } from '../../contexts/DataContext';
 import { RequestDetailPage } from './RequestDetailPage';
 import { FileText, Clock, CheckCircle, AlertCircle, User } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 type ViewMode = 'current' | 'finished';
 
@@ -28,17 +32,6 @@ export const AdminRequestsPanel: React.FC = () => {
     }
   };
 
-  const getStatusColor = (status: Request['status']) => {
-    switch (status) {
-      case 'current':
-        return 'bg-blue-50 text-blue-700 border-blue-200';
-      case 'finished':
-        return 'bg-green-50 text-green-700 border-green-200';
-      case 'pending':
-        return 'bg-yellow-50 text-yellow-700 border-yellow-200';
-    }
-  };
-
   const handleStatusChange = (requestId: string, newStatus: Request['status']) => {
     updateRequestStatus(requestId, newStatus);
   };
@@ -50,131 +43,137 @@ export const AdminRequestsPanel: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* View Mode Tabs */}
-      <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg overflow-x-auto">
-        {(['current', 'finished'] as ViewMode[]).map((mode) => (
-          <button
-            key={mode}
-            onClick={() => setViewMode(mode)}
-            className={`flex-1 min-w-[120px] px-3 py-2 text-sm font-medium rounded-md transition-colors capitalize whitespace-nowrap ${
-              viewMode === mode
-                ? 'bg-white text-black shadow-sm'
-                : 'text-gray-600 hover:text-black'
-            }`}
-          >
-            {mode} ({requests.filter(req => req.status === mode).length})
-          </button>
-        ))}
-      </div>
+      <Tabs value={viewMode} onValueChange={(value) => setViewMode(value as ViewMode)}>
+        <TabsList className="grid w-full grid-cols-2">
+          {(['current', 'finished'] as ViewMode[]).map((mode) => (
+            <TabsTrigger key={mode} value={mode} className="capitalize">
+              {mode} ({requests.filter(req => req.status === mode).length})
+            </TabsTrigger>
+          ))}
+        </TabsList>
+      </Tabs>
 
       {/* Requests List */}
       <div className="space-y-4">
         {filteredRequests.length === 0 ? (
-          <div className="text-center py-12 bg-gray-50 rounded-lg">
-            <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">
-              No {viewMode} requests
-            </h3>
-            <p className="text-gray-500">
-              {viewMode === 'current' && "No active requests to work on."}
-              {viewMode === 'finished' && "No completed requests yet."}
-            </p>
-          </div>
+          <Card>
+            <CardContent className="flex flex-col items-center justify-center py-16 text-center">
+              <FileText className="h-12 w-12 text-muted-foreground mb-4" />
+              <CardTitle className="mb-2">
+                No {viewMode} requests
+              </CardTitle>
+              <p className="text-muted-foreground">
+                {viewMode === 'current' && "No active requests to work on."}
+                {viewMode === 'finished' && "No completed requests yet."}
+              </p>
+            </CardContent>
+          </Card>
         ) : (
           filteredRequests.map((request) => (
-            <div 
+            <Card 
               key={request.id} 
-              className="bg-gray-50 rounded-lg p-6 cursor-pointer hover:bg-gray-100 transition-colors"
+              className="cursor-pointer hover:shadow-md transition-shadow"
               onClick={() => setSelectedRequest(request)}
             >
-              <div className="flex items-start justify-between mb-4">
-                <div className="flex-1">
-                  <div className="flex items-center space-x-3 mb-2">
-                    <div className="flex items-center space-x-2">
-                      {getStatusIcon(request.status)}
-                      <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full border capitalize ${getStatusColor(request.status)}`}>
-                        {request.status}
-                      </span>
+              <CardContent className="p-6">
+                <div className="flex items-start justify-between mb-4">
+                  <div className="flex-1">
+                    <div className="flex items-center space-x-3 mb-2">
+                      <div className="flex items-center space-x-2">
+                        {getStatusIcon(request.status)}
+                        <Badge 
+                          variant={
+                            request.status === 'finished' ? 'default' : 
+                            request.status === 'current' ? 'secondary' : 
+                            'outline'
+                          } 
+                          className="capitalize"
+                        >
+                          {request.status}
+                        </Badge>
+                      </div>
+                      <div className="flex items-center text-sm text-muted-foreground">
+                        <User className="h-3 w-3 mr-1" />
+                        {getClientName(request.clientId)}
+                      </div>
                     </div>
-                    <div className="flex items-center text-sm text-gray-500">
-                      <User className="h-3 w-3 mr-1" />
-                      {getClientName(request.clientId)}
-                    </div>
-                  </div>
-                  
-                  <h3 className="text-lg font-semibold text-black mb-2">
-                    {request.title}
-                  </h3>
-                  <p className="text-gray-600 mb-3">
-                    {request.description}
-                  </p>
-                  {request.notes && (
-                    <p className="text-sm text-gray-500 mb-3">
-                      <strong>Notes:</strong> {request.notes}
+                    
+                    <CardTitle className="mb-2">
+                      {request.title}
+                    </CardTitle>
+                    <p className="text-muted-foreground mb-3">
+                      {request.description}
                     </p>
-                  )}
-                </div>
-              </div>
-
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-4 text-sm text-gray-500">
-                  <span>Created: {new Date(request.createdAt).toLocaleDateString()}</span>
-                  {request.files.length > 0 && (
-                    <span>{request.files.length} file(s) attached</span>
-                  )}
-                </div>
-
-                <div className="flex space-x-2">
-                  {request.status === 'pending' && (
-                    <button
-                      onClick={(e) => { e.stopPropagation(); handleStatusChange(request.id, 'current'); }}
-                      onClick={() => handleStatusChange(request.id, 'current')}
-                      className="px-3 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-sm"
-                    >
-                      Start Working
-                    </button>
-                  )}
-                  {request.status === 'current' && (
-                    <button
-                      onClick={(e) => { e.stopPropagation(); handleStatusChange(request.id, 'finished'); }}
-                      onClick={() => handleStatusChange(request.id, 'finished')}
-                      className="px-3 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors text-sm"
-                    >
-                      Mark Complete
-                    </button>
-                  )}
-                  {request.status === 'finished' && (
-                    <button
-                      onClick={(e) => { e.stopPropagation(); handleStatusChange(request.id, 'current'); }}
-                      onClick={() => handleStatusChange(request.id, 'current')}
-                      className="px-3 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors text-sm"
-                    >
-                      Reopen
-                    </button>
-                  )}
-                </div>
-              </div>
-
-              <div className="text-sm text-gray-500 mb-2">
-                Click to view details • REQ-{request.id.padStart(4, '0')}
-              </div>
-
-              {request.files.length > 0 && (
-                <div className="mt-4 pt-4 border-t border-gray-200">
-                  <h4 className="text-sm font-medium text-gray-700 mb-2">Attached Files:</h4>
-                  <div className="flex flex-wrap gap-2">
-                    {request.files.map((file, index) => (
-                      <span
-                        key={index}
-                        className="inline-flex items-center px-2 py-1 bg-white border border-gray-200 rounded text-xs text-gray-600"
-                      >
-                        <FileText className="h-3 w-3 mr-1" />
-                        {file}
-                      </span>
-                    ))}
+                    {request.notes && (
+                      <p className="text-sm text-muted-foreground mb-3">
+                        <span className="font-medium">Notes:</span> {request.notes}
+                      </p>
+                    )}
                   </div>
                 </div>
-              )}
-            </div>
+
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-4 text-sm text-muted-foreground">
+                    <span>Created: {new Date(request.createdAt).toLocaleDateString()}</span>
+                    {request.files.length > 0 && (
+                      <span>{request.files.length} file(s) attached</span>
+                    )}
+                  </div>
+
+                  <div className="flex space-x-2">
+                    {request.status === 'pending' && (
+                      <Button
+                        variant="default"
+                        size="sm"
+                        onClick={(e) => { e.stopPropagation(); handleStatusChange(request.id, 'current'); }}
+                      >
+                        Start Working
+                      </Button>
+                    )}
+                    {request.status === 'current' && (
+                      <Button
+                        variant="default"
+                        size="sm"
+                        onClick={(e) => { e.stopPropagation(); handleStatusChange(request.id, 'finished'); }}
+                      >
+                        Mark Complete
+                      </Button>
+                    )}
+                    {request.status === 'finished' && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={(e) => { e.stopPropagation(); handleStatusChange(request.id, 'current'); }}
+                      >
+                        Reopen
+                      </Button>
+                    )}
+                  </div>
+                </div>
+
+                <div className="text-sm text-muted-foreground mt-2">
+                  Click to view details • REQ-{request.id.padStart(4, '0')}
+                </div>
+
+                {request.files.length > 0 && (
+                  <div className="mt-4 pt-4 border-t">
+                    <h4 className="text-sm font-medium text-foreground mb-2">Attached Files:</h4>
+                    <div className="flex flex-wrap gap-2">
+                      {request.files.map((file, index) => (
+                        <Badge
+                          key={index}
+                          variant="outline"
+                          className="text-xs"
+                        >
+                          <FileText className="h-3 w-3 mr-1" />
+                          {file}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
           ))
         )}
       </div>
