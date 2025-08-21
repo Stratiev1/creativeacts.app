@@ -78,6 +78,8 @@ export const Layout: React.FC<LayoutProps> = ({
           {/* Sidebar Header */}
           <div className="p-6 border-b">
             <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-2">
               <div className={cn(
                 "flex items-center",
                 sidebarCollapsed ? "justify-center" : "space-x-3"
@@ -97,7 +99,8 @@ export const Layout: React.FC<LayoutProps> = ({
                 </Button>
               )}
             </div>
-          </div>
+            </div>
+          )}
 
           {/* Navigation */}
           <nav className="flex-1 p-4">
@@ -144,21 +147,20 @@ export const Layout: React.FC<LayoutProps> = ({
                   </p>
                   <p className="text-xs text-muted-foreground truncate">
                     {getSubscriptionDisplay()}
-                  </p>
-                </div>
+                {!sidebarCollapsed && (
+                  <span className="font-semibold text-foreground">Creative Acts</span>
+                )}
+              </div>
+              {!sidebarCollapsed && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setSidebarCollapsed(true)}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
               )}
             </div>
-            {!sidebarCollapsed && (
-              <Button
-                variant="ghost"
-                size="sm"
-                className="w-full justify-start"
-                onClick={signOut}
-              >
-                <LogOut className="h-4 w-4 mr-2" />
-                Sign out
-              </Button>
-            )}
           </div>
 
           {/* Expand button when collapsed */}
@@ -167,13 +169,14 @@ export const Layout: React.FC<LayoutProps> = ({
               <Button
                 variant="ghost"
                 size="sm"
+                className="w-full justify-start"
+                onClick={signOut}
                 onClick={() => setSidebarCollapsed(false)}
                 className="w-full"
-              >
+                <LogOut className="h-4 w-4 mr-2" />
                 <Menu className="h-4 w-4" />
               </Button>
-            </div>
-          )}
+          </div>
         </div>
       )}
 
