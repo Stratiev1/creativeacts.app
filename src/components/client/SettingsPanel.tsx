@@ -262,92 +262,17 @@ export const SettingsPanel: React.FC = () => {
           </div>
 
           <div className="flex justify-end">
-            <button
+            <Button
               type="submit"
-              className="px-6 py-3 bg-primary-black text-primary-white rounded-xl shadow-lg hover:bg-opacity-90 transition-all duration-200"
             >
               Update Password
-            </button>
+            </Button>
           </div>
         </form>
-      </div>
+        </CardContent>
+      </Card>
 
       {/* Notification Settings */}
-      <div className="bg-primary-grey rounded-xl p-6">
-        <div className="flex items-center space-x-2 mb-6">
-          <Bell className="h-5 w-5 text-primary-orange" />
-          <h3 className="text-lg font-semibold text-primary-black">Notification Preferences</h3>
-        </div>
-        
-        <form onSubmit={handleNotificationUpdate} className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* General Notifications */}
-            <div className="space-y-4">
-              <h4 className="font-medium text-primary-black">General</h4>
-              
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  <Mail className="h-4 w-4 text-gray-400" />
-                  <div>
-                    <p className="text-sm font-medium text-gray-900">Email Notifications</p>
-                    <p className="text-xs text-gray-500">Receive notifications via email</p>
-                  </div>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => handleNotificationChange('emailNotifications')}
-                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-all duration-200 ${
-                    notifications.emailNotifications ? 'bg-primary-orange' : 'bg-gray-200'
-                  }`}
-                >
-                  <span
-                    className={`inline-block h-4 w-4 transform rounded-full bg-primary-white transition-transform ${
-                      notifications.emailNotifications ? 'translate-x-6' : 'translate-x-1'
-                    }`}
-                  />
-                </button>
-              </div>
-
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  <Bell className="h-4 w-4 text-gray-400" />
-                  <div>
-                    <p className="text-sm font-medium text-gray-900">Push Notifications</p>
-                    <p className="text-xs text-gray-500">Receive browser notifications</p>
-                  </div>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => handleNotificationChange('pushNotifications')}
-                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-all duration-200 ${
-                    notifications.pushNotifications ? 'bg-primary-orange' : 'bg-gray-200'
-                  }`}
-                >
-                  <span
-                    className={`inline-block h-4 w-4 transform rounded-full bg-primary-white transition-transform ${
-                      notifications.pushNotifications ? 'translate-x-6' : 'translate-x-1'
-                    }`}
-                  />
-                </button>
-              </div>
-
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  <Mail className="h-4 w-4 text-gray-400" />
-                  <div>
-                    <p className="text-sm font-medium text-gray-900">Weekly Digest</p>
-                    <p className="text-xs text-gray-500">Weekly summary of your activity</p>
-                  </div>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => handleNotificationChange('weeklyDigest')}
-                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-all duration-200 ${
-                    notifications.weeklyDigest ? 'bg-primary-orange' : 'bg-gray-200'
-                  }`}
-                >
-                  <span
-                    className={`inline-block h-4 w-4 transform rounded-full bg-primary-white transition-transform ${
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
@@ -356,128 +281,130 @@ export const SettingsPanel: React.FC = () => {
           </CardTitle>
         </CardHeader>
         <CardContent>
-
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  <Mail className="h-4 w-4 text-gray-400" />
-                  <div>
-              <h4 className="font-medium text-foreground">General</h4>
-                    <p className="text-xs text-gray-500">Product updates and promotions</p>
-                  </div>
-                </div>
-                  <Mail className="h-4 w-4 text-muted-foreground" />
-                  type="button"
-                    <p className="text-sm font-medium text-foreground">Email Notifications</p>
-                    <p className="text-xs text-muted-foreground">Receive notifications via email</p>
-                    notifications.marketingEmails ? 'bg-primary-orange' : 'bg-gray-200'
-                  }`}
-                <Switch
-                  checked={notifications.emailNotifications}
-                  onCheckedChange={() => handleNotificationChange('emailNotifications')}
-                />
-              
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  <FileText className="h-4 w-4 text-gray-400" />
-                  <Bell className="h-4 w-4 text-muted-foreground" />
-                    <p className="text-sm font-medium text-gray-900">Request Updates</p>
-                    <p className="text-sm font-medium text-foreground">Push Notifications</p>
-                    <p className="text-xs text-muted-foreground">Receive browser notifications</p>
-                </div>
-                <button
-                <Switch
-                  checked={notifications.pushNotifications}
-                  onCheckedChange={() => handleNotificationChange('pushNotifications')}
-                />
-
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  <MessageSquare className="h-4 w-4 text-gray-400" />
-                  <Mail className="h-4 w-4 text-muted-foreground" />
-                    <p className="text-sm font-medium text-gray-900">Chat Messages</p>
-                    <p className="text-sm font-medium text-foreground">Weekly Digest</p>
-                    <p className="text-xs text-muted-foreground">Weekly summary of your activity</p>
-                </div>
-                <button
-                <Switch
-                  checked={notifications.weeklyDigest}
-                  onCheckedChange={() => handleNotificationChange('weeklyDigest')}
-                />
-
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  <FileText className="h-4 w-4 text-gray-400" />
-                  <Mail className="h-4 w-4 text-muted-foreground" />
-                    <p className="text-sm font-medium text-gray-900">Project Deadlines</p>
-                    <p className="text-sm font-medium text-foreground">Marketing Emails</p>
-                    <p className="text-xs text-muted-foreground">Product updates and promotions</p>
-                </div>
-                <button
-                <Switch
-                  checked={notifications.marketingEmails}
-                  onCheckedChange={() => handleNotificationChange('marketingEmails')}
-                />
-
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  <CreditCard className="h-4 w-4 text-gray-400" />
-                  <div>
-              <h4 className="font-medium text-foreground">Project Updates</h4>
-                    <p className="text-xs text-gray-500">Payment and subscription updates</p>
-                  </div>
-                </div>
-                  <FileText className="h-4 w-4 text-muted-foreground" />
-                  type="button"
-                    <p className="text-sm font-medium text-foreground">Request Updates</p>
-                    <p className="text-xs text-muted-foreground">Status changes on your requests</p>
-                    notifications.billingAlerts ? 'bg-primary-orange' : 'bg-gray-200'
-                  }`}
-                <Switch
-                  checked={notifications.requestUpdates}
-                  onCheckedChange={() => handleNotificationChange('requestUpdates')}
-                />
-              type="submit"
-              className="px-6 py-3 bg-primary-black text-primary-white rounded-xl shadow-lg hover:bg-opacity-90 transition-all duration-200"
-            >
-              Update Notifications
-                  <MessageSquare className="h-4 w-4 text-muted-foreground" />
-          </div>
-                    <p className="text-sm font-medium text-foreground">Chat Messages</p>
-                    <p className="text-xs text-muted-foreground">New messages from our team</p>
-
-      {/* Change Password */}
-                <Switch
-                  checked={notifications.chatMessages}
-                  onCheckedChange={() => handleNotificationChange('chatMessages')}
-                />
-                  <Lock className="h-4 w-4 text-muted-foreground" />
-                </div>
-                <Input
-                  id="currentPassword2"
-                  <FileText className="h-4 w-4 text-muted-foreground" />
-                  value={formData.currentPassword}
-                    <p className="text-sm font-medium text-foreground">Project Deadlines</p>
-                    <p className="text-xs text-muted-foreground">Reminders about project milestones</p>
-                  required
-                />
-                <Switch
-                  checked={notifications.projectDeadlines}
-                  onCheckedChange={() => handleNotificationChange('projectDeadlines')}
-                />
-                  value={formData.newPassword}
-                  onChange={(e) => setFormData(prev => ({ ...prev, newPassword: e.target.value }))}
-                  className="pl-10"
-                  required
-                  <CreditCard className="h-4 w-4 text-muted-foreground" />
-              </div>
-                    <p className="text-sm font-medium text-foreground">Billing Alerts</p>
-                    <p className="text-xs text-muted-foreground">Payment and subscription updates</p>
-            {/* Confirm Password */}
+        
+        <form onSubmit={handleNotificationUpdate} className="space-y-6">
+          <div className="space-y-6">
             <div>
-                <Switch
-                  checked={notifications.billingAlerts}
-                  onCheckedChange={() => handleNotificationChange('billingAlerts')}
-                />
+              <h4 className="font-medium text-foreground mb-4">General</h4>
+              <div className="space-y-4">
+              
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <Mail className="h-4 w-4 text-muted-foreground" />
+                    <div>
+                      <p className="text-sm font-medium text-foreground">Email Notifications</p>
+                      <p className="text-xs text-muted-foreground">Receive notifications via email</p>
+                    </div>
+                  </div>
+                  <Switch
+                    checked={notifications.emailNotifications}
+                    onCheckedChange={() => handleNotificationChange('emailNotifications')}
+                  />
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <Bell className="h-4 w-4 text-muted-foreground" />
+                    <div>
+                      <p className="text-sm font-medium text-foreground">Push Notifications</p>
+                      <p className="text-xs text-muted-foreground">Receive browser notifications</p>
+                    </div>
+                  </div>
+                  <Switch
+                    checked={notifications.pushNotifications}
+                    onCheckedChange={() => handleNotificationChange('pushNotifications')}
+                  />
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <Mail className="h-4 w-4 text-muted-foreground" />
+                    <div>
+                      <p className="text-sm font-medium text-foreground">Weekly Digest</p>
+                      <p className="text-xs text-muted-foreground">Weekly summary of your activity</p>
+                    </div>
+                  </div>
+                  <Switch
+                    checked={notifications.weeklyDigest}
+                    onCheckedChange={() => handleNotificationChange('weeklyDigest')}
+                  />
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <Mail className="h-4 w-4 text-muted-foreground" />
+                    <div>
+                      <p className="text-sm font-medium text-foreground">Marketing Emails</p>
+                      <p className="text-xs text-muted-foreground">Product updates and promotions</p>
+                    </div>
+                  </div>
+                  <Switch
+                    checked={notifications.marketingEmails}
+                    onCheckedChange={() => handleNotificationChange('marketingEmails')}
+                  />
+                </div>
+              </div>
+            </div>
+
+            <Separator />
+
+            <div>
+              <h4 className="font-medium text-foreground mb-4">Project Updates</h4>
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <FileText className="h-4 w-4 text-muted-foreground" />
+                    <div>
+                      <p className="text-sm font-medium text-foreground">Request Updates</p>
+                      <p className="text-xs text-muted-foreground">Status changes on your requests</p>
+                    </div>
+                  </div>
+                  <Switch
+                    checked={notifications.requestUpdates}
+                    onCheckedChange={() => handleNotificationChange('requestUpdates')}
+                  />
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <MessageSquare className="h-4 w-4 text-muted-foreground" />
+                    <div>
+                      <p className="text-sm font-medium text-foreground">Chat Messages</p>
+                      <p className="text-xs text-muted-foreground">New messages from our team</p>
+                    </div>
+                  </div>
+                  <Switch
+                    checked={notifications.chatMessages}
+                    onCheckedChange={() => handleNotificationChange('chatMessages')}
+                  />
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <FileText className="h-4 w-4 text-muted-foreground" />
+                    <div>
+                      <p className="text-sm font-medium text-foreground">Project Deadlines</p>
+                      <p className="text-xs text-muted-foreground">Reminders about project milestones</p>
+                    </div>
+                  </div>
+                  <Switch
+                    checked={notifications.projectDeadlines}
+                    onCheckedChange={() => handleNotificationChange('projectDeadlines')}
+                  />
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <CreditCard className="h-4 w-4 text-muted-foreground" />
+                    <div>
+                      <p className="text-sm font-medium text-foreground">Billing Alerts</p>
+                      <p className="text-xs text-muted-foreground">Payment and subscription updates</p>
+                    </div>
+                  </div>
+                  <Switch
+                    checked={notifications.billingAlerts}
+                    onCheckedChange={() => handleNotificationChange('billingAlerts')}
+                  />
+                </div>
               </div>
             </div>
           </div>
@@ -485,9 +412,10 @@ export const SettingsPanel: React.FC = () => {
           <div className="flex justify-end">
             <Button
               type="submit"
-              Update Password
+            >
+              Update Notifications
             </Button>
-            </Button>
+          </div>
         </form>
         </CardContent>
         </CardContent>
