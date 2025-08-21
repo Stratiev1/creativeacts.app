@@ -163,10 +163,10 @@ export const Layout: React.FC<LayoutProps> = ({
 
           {/* Expand button when collapsed */}
           {sidebarCollapsed && (
-            <div className="p-2 border-t border-border">
+            <div className="p-2 border-b border-border">
               <Button
                 variant="ghost"
-                size="icon"
+                size="sm"
                 onClick={() => setSidebarCollapsed(false)}
                 className="w-full"
               >
