@@ -78,6 +78,8 @@ export const Layout: React.FC<LayoutProps> = ({
           {/* Sidebar Header */}
           <div className="p-6 border-b">
             <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-2">
               <div className={cn(
                 "flex items-center",
                 sidebarCollapsed ? "justify-center" : "space-x-3"
@@ -97,19 +99,6 @@ export const Layout: React.FC<LayoutProps> = ({
                 </Button>
               )}
             </div>
-          </div>
-
-          {/* Expand button when collapsed */}
-          {sidebarCollapsed && (
-            <div className="p-2 border-b">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setSidebarCollapsed(false)}
-                className="w-full"
-              >
-                <Menu className="h-4 w-4" />
-              </Button>
             </div>
           )}
 
@@ -158,42 +147,58 @@ export const Layout: React.FC<LayoutProps> = ({
                   </p>
                   <p className="text-xs text-muted-foreground truncate">
                     {getSubscriptionDisplay()}
-                  </p>
-                </div>
+                {!sidebarCollapsed && (
+                  <span className="font-semibold text-foreground">Creative Acts</span>
+                )}
+              </div>
+              {!sidebarCollapsed && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setSidebarCollapsed(true)}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
               )}
             </div>
-            {!sidebarCollapsed && (
+          </div>
+
+          {/* Expand button when collapsed */}
+          {sidebarCollapsed && (
+            <div className="p-2 border-b border-border">
               <Button
                 variant="ghost"
                 size="sm"
                 className="w-full justify-start"
                 onClick={signOut}
-              >
+                onClick={() => setSidebarCollapsed(false)}
+                className="w-full"
                 <LogOut className="h-4 w-4 mr-2" />
-                Sign out
+                <Menu className="h-4 w-4" />
               </Button>
-            )}
           </div>
         </div>
       )}
 
-      {/* Mobile Menu Overlay */}
-      {mobileMenuOpen && (
-        <div className="lg:hidden fixed inset-0 z-50 bg-background/80 backdrop-blur-sm" onClick={() => setMobileMenuOpen(false)}>
-          <div className="fixed inset-y-0 left-0 w-64 bg-card shadow-xl border-r" onClick={(e) => e.stopPropagation()}>
-            {/* Mobile Menu Header */}
-            <div className="flex items-center justify-between p-6 border-b">
-              <div className="flex items-center space-x-3">
-                <img src="/logo.svg" alt="Creative Acts" className="h-8 w-8" />
-                <span className="font-semibold text-foreground">Creative Acts</span>
+      {/* Mobile Sidebar Overlay */}
+      {showSidebar && mobileMenuOpen && (
+        <div className="lg:hidden fixed inset-0 z-50 bg-background/80 backdrop-blur-sm">
+          <div className="fixed inset-y-0 left-0 w-64 bg-card border-r shadow-lg">
+            {/* Mobile Sidebar Header */}
+            <div className="p-6 border-b">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <img src="/logo.svg" alt="Creative Acts" className="h-8 w-8 flex-shrink-0" />
+                  <span className="font-semibold text-foreground">Creative Acts</span>
+                </div>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
               </div>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                <X className="h-4 w-4" />
-              </Button>
             </div>
 
             {/* Mobile Navigation */}
