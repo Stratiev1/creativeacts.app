@@ -85,17 +85,6 @@ export const RequestsPanel: React.FC = () => {
     }
   };
 
-  const getStatusColor = (status: Request['status']) => {
-    switch (status) {
-      case 'current':
-        return 'bg-blue-50 text-blue-700 border-blue-200';
-      case 'finished':
-        return 'bg-green-50 text-green-700 border-green-200';
-      case 'pending':
-        return 'bg-yellow-50 text-yellow-700 border-yellow-200';
-    }
-  };
-
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -131,134 +120,130 @@ export const RequestsPanel: React.FC = () => {
             </DialogDescription>
           </DialogHeader>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <Label htmlFor="title">
-                  Title *
-                </Label>
-                <Input
-                  id="title"
-                  value={formData.title}
-                  onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
-                  placeholder="e.g., Logo Design for Tech Startup"
-                  required
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="space-y-2">
+              <Label htmlFor="title">
+                Title *
+              </Label>
+              <Input
+                id="title"
+                value={formData.title}
+                onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
+                placeholder="e.g., Logo Design for Tech Startup"
+                required
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="description">
+                Description *
+              </Label>
+              <Textarea
+                id="description"
+                value={formData.description}
+                onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+                rows={4}
+                placeholder="Describe your project requirements..."
+                required
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="notes">
+                Additional Notes
+              </Label>
+              <Textarea
+                id="notes"
+                value={formData.notes}
+                onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value }))}
+                rows={2}
+                placeholder="Any additional notes or preferences..."
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label>Upload Files</Label>
+              <div className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-6 text-center hover:border-muted-foreground/50 transition-colors">
+                <input
+                  type="file"
+                  onChange={handleFileUpload}
+                  multiple
+                  className="hidden"
+                  id="file-upload"
                 />
+                <label
+                  htmlFor="file-upload"
+                  className="cursor-pointer flex flex-col items-center"
+                >
+                  <Upload className="h-8 w-8 text-muted-foreground mb-2" />
+                  <span className="text-sm text-muted-foreground">
+                    Click to upload files or drag and drop
+                  </span>
+                  <span className="text-xs text-muted-foreground mt-1">
+                    PDF, JPG, PNG up to 10MB each
+                  </span>
+                </label>
               </div>
 
-              <div>
-                <Label htmlFor="description">
-                  Description *
-                </Label>
-                <Textarea
-                  id="description"
-                  value={formData.description}
-                  onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-                  rows={4}
-                  placeholder="Describe your project requirements..."
-                  required
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="notes">
-                  Additional Notes
-                </Label>
-                <Textarea
-                  id="notes"
-                  value={formData.notes}
-                  onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value }))}
-                  rows={2}
-                  placeholder="Any additional notes or preferences..."
-                />
-              </div>
-
-              <div>
-                <Label>
-                  Upload Files
-                </Label>
-                <div className="border-2 border-dashed border-border rounded-md p-4">
-                  <input
-                    type="file"
-                    onChange={handleFileUpload}
-                    multiple
-                    className="hidden"
-                    id="file-upload"
-                  />
-                  <label
-                    htmlFor="file-upload"
-                    className="cursor-pointer flex flex-col items-center"
-                  >
-                    <Upload className="h-8 w-8 text-muted-foreground mb-2" />
-                    <span className="text-sm text-muted-foreground">
-                      Click to upload files or drag and drop
-                    </span>
-                    <span className="text-xs text-muted-foreground mt-1">
-                      PDF, JPG, PNG up to 10MB each
-                    </span>
-                  </label>
+              {formData.files.length > 0 && (
+                <div className="mt-4 space-y-2">
+                  {formData.files.map((file, index) => (
+                    <div key={index} className="flex items-center justify-between bg-muted p-3 rounded-md">
+                      <span className="text-sm text-foreground">{file}</span>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        type="button"
+                        onClick={() => removeFile(index)}
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ))}
                 </div>
-
-                {formData.files.length > 0 && (
-                  <div className="mt-4 space-y-2">
-                    {formData.files.map((file, index) => (
-                      <div key={index} className="flex items-center justify-between bg-muted p-2 rounded">
-                        <span className="text-sm text-foreground">{file}</span>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          type="button"
-                          onClick={() => removeFile(index)}
-                        >
-                          <X className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              {/* Design Enhancer Toggle */}
-              <div className="flex items-center justify-between">
-                <div className="space-y-0.5">
-                  <Label>
-                    Design Request Enhancer
-                  </Label>
-                  <p className="text-xs text-muted-foreground">
-                    Help us understand your design preferences (optional)
-                  </p>
-                </div>
-                <Switch
-                  checked={showEnhancer}
-                  onCheckedChange={setShowEnhancer}
-                />
-              </div>
-
-              {/* Design Enhancer */}
-              {showEnhancer && (
-                <DesignEnhancer
-                  onSelectionsChange={setEnhancerSelections}
-                  initialSelections={enhancerSelections}
-                />
               )}
+            </div>
 
-              <div className="flex justify-end space-x-3 pt-4">
-                <Button
-                  variant="outline"
-                  onClick={() => {
-                    setShowCreateForm(false);
-                    setShowEnhancer(false);
-                    setEnhancerSelections({});
-                  }}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  type="submit"
-                >
-                  Create Request
-                </Button>
+            {/* Design Enhancer Toggle */}
+            <div className="flex items-center justify-between space-x-2">
+              <div className="space-y-0.5">
+                <Label className="text-base">
+                  Design Request Enhancer
+                </Label>
+                <p className="text-sm text-muted-foreground">
+                  Help us understand your design preferences (optional)
+                </p>
               </div>
-            </form>
+              <Switch
+                checked={showEnhancer}
+                onCheckedChange={setShowEnhancer}
+              />
+            </div>
+
+            {/* Design Enhancer */}
+            {showEnhancer && (
+              <DesignEnhancer
+                onSelectionsChange={setEnhancerSelections}
+                initialSelections={enhancerSelections}
+              />
+            )}
+
+            <div className="flex justify-end space-x-3 pt-6 border-t">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setShowCreateForm(false);
+                  setShowEnhancer(false);
+                  setEnhancerSelections({});
+                }}
+              >
+                Cancel
+              </Button>
+              <Button type="submit">
+                Create Request
+              </Button>
+            </div>
+          </form>
         </DialogContent>
       </Dialog>
 
@@ -266,70 +251,77 @@ export const RequestsPanel: React.FC = () => {
       <div className="space-y-4">
         {filteredRequests.length === 0 ? (
           <Card>
-            <CardContent className="pt-6 text-center py-12">
-            <FileText className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-foreground mb-2">
-              No {viewMode} requests
-            </h3>
-            <p className="text-muted-foreground">
-              {viewMode === 'current' && "You don't have any active requests at the moment."}
-              {viewMode === 'finished' && "No completed requests yet."}
-              {viewMode === 'pending' && "No pending requests at the moment."}
-            </p>
+            <CardContent className="flex flex-col items-center justify-center py-16 text-center">
+              <FileText className="h-12 w-12 text-muted-foreground mb-4" />
+              <CardTitle className="mb-2">
+                No {viewMode} requests
+              </CardTitle>
+              <p className="text-muted-foreground">
+                {viewMode === 'current' && "You don't have any active requests at the moment."}
+                {viewMode === 'finished' && "No completed requests yet."}
+                {viewMode === 'pending' && "No pending requests at the moment."}
+              </p>
             </CardContent>
           </Card>
         ) : (
           filteredRequests.map((request) => (
-            <Card key={request.id}>
-              <CardContent className="pt-6">
-              <div className="flex items-start justify-between mb-4">
-                <div className="flex-1">
-                  <div className="flex items-center space-x-2 mb-2">
-                    {getStatusIcon(request.status)}
-                    <Badge variant={request.status === 'finished' ? 'default' : request.status === 'current' ? 'secondary' : 'outline'} className="capitalize">
-                      {request.status}
-                    </Badge>
-                  </div>
-                  <h3 className="text-lg font-semibold text-foreground mb-2">
-                    {request.title}
-                  </h3>
-                  <p className="text-muted-foreground mb-3">
-                    {request.description}
-                  </p>
-                  {request.notes && (
-                    <p className="text-sm text-muted-foreground mb-3">
-                      <strong>Notes:</strong> {request.notes}
-                    </p>
-                  )}
-                </div>
-              </div>
-
-              <div className="flex items-center justify-between text-sm text-muted-foreground">
-                <div className="flex items-center space-x-4">
-                  <span>Created: {new Date(request.createdAt).toLocaleDateString()}</span>
-                  {request.files.length > 0 && (
-                    <span>{request.files.length} file(s) attached</span>
-                  )}
-                </div>
-              </div>
-
-              {request.files.length > 0 && (
-                <div className="mt-4 pt-4 border-t border-border">
-                  <h4 className="text-sm font-medium text-foreground mb-2">Attached Files:</h4>
-                  <div className="flex flex-wrap gap-2">
-                    {request.files.map((file, index) => (
-                      <Badge
-                        key={index}
-                        variant="outline"
-                        className="text-xs"
+            <Card key={request.id} className="hover:shadow-md transition-shadow">
+              <CardContent className="p-6">
+                <div className="flex items-start justify-between mb-4">
+                  <div className="flex-1">
+                    <div className="flex items-center space-x-2 mb-3">
+                      {getStatusIcon(request.status)}
+                      <Badge 
+                        variant={
+                          request.status === 'finished' ? 'default' : 
+                          request.status === 'current' ? 'secondary' : 
+                          'outline'
+                        } 
+                        className="capitalize"
                       >
-                        <FileText className="h-3 w-3 mr-1" />
-                        {file}
+                        {request.status}
                       </Badge>
-                    ))}
+                    </div>
+                    <CardTitle className="mb-2">
+                      {request.title}
+                    </CardTitle>
+                    <p className="text-muted-foreground mb-3">
+                      {request.description}
+                    </p>
+                    {request.notes && (
+                      <p className="text-sm text-muted-foreground mb-3">
+                        <span className="font-medium">Notes:</span> {request.notes}
+                      </p>
+                    )}
                   </div>
                 </div>
-              )}
+
+                <div className="flex items-center justify-between text-sm text-muted-foreground">
+                  <div className="flex items-center space-x-4">
+                    <span>Created: {new Date(request.createdAt).toLocaleDateString()}</span>
+                    {request.files.length > 0 && (
+                      <span>{request.files.length} file(s) attached</span>
+                    )}
+                  </div>
+                </div>
+
+                {request.files.length > 0 && (
+                  <div className="mt-4 pt-4 border-t">
+                    <h4 className="text-sm font-medium text-foreground mb-2">Attached Files:</h4>
+                    <div className="flex flex-wrap gap-2">
+                      {request.files.map((file, index) => (
+                        <Badge
+                          key={index}
+                          variant="outline"
+                          className="text-xs"
+                        >
+                          <FileText className="h-3 w-3 mr-1" />
+                          {file}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </CardContent>
             </Card>
           ))

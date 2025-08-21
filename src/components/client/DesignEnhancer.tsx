@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 interface DesignEnhancerProps {
   onSelectionsChange: (selections: { [categoryId: string]: string }) => void;
@@ -63,10 +64,10 @@ export const DesignEnhancer: React.FC<DesignEnhancerProps> = ({
           </CardTitle>
         </CardHeader>
         <CardContent>
-        <div className="animate-pulse space-y-4">
-          <div className="h-4 bg-muted rounded w-3/4"></div>
-          <div className="h-4 bg-muted rounded w-1/2"></div>
-        </div>
+          <div className="animate-pulse space-y-4">
+            <div className="h-4 bg-muted rounded w-3/4"></div>
+            <div className="h-4 bg-muted rounded w-1/2"></div>
+          </div>
         </CardContent>
       </Card>
     );
@@ -103,8 +104,7 @@ export const DesignEnhancer: React.FC<DesignEnhancerProps> = ({
         </CardDescription>
       </CardHeader>
       
-      <CardContent>
-      <div className="space-y-4">
+      <CardContent className="space-y-4">
         {categories.map((category) => {
           const categoryOptions = getOptionsByCategory(category.id);
           const isExpanded = expandedCategories[category.id];
@@ -112,138 +112,144 @@ export const DesignEnhancer: React.FC<DesignEnhancerProps> = ({
           const selectedOptionData = categoryOptions.find(opt => opt.id === selectedOption);
 
           return (
-            <Card key={category.id}>
-              <Button
-                variant="ghost"
-                onClick={() => toggleCategory(category.id)}
-                className="w-full justify-between h-auto p-4"
-              >
-                <div className="flex-1">
-                  <h4 className="font-medium text-foreground text-left">{category.name}</h4>
-                  <p className="text-sm text-muted-foreground mt-1 text-left">{category.description}</p>
-                  {selectedOptionData && (
-                    <p className="text-sm text-primary mt-1 text-left">
-                      Selected: {selectedOptionData.name}
-                    </p>
-                  )}
-                </div>
-                <div className="flex items-center space-x-2">
+            <Collapsible
+              key={category.id}
+              open={isExpanded}
+              onOpenChange={() => toggleCategory(category.id)}
+            >
+              <Card>
+                <CollapsibleTrigger asChild>
                   <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleViewAll(category.id);
-                    }}
+                    variant="ghost"
+                    className="w-full justify-between h-auto p-4"
                   >
-                    View all
+                    <div className="flex-1 text-left">
+                      <h4 className="font-medium text-foreground">{category.name}</h4>
+                      <p className="text-sm text-muted-foreground mt-1">{category.description}</p>
+                      {selectedOptionData && (
+                        <p className="text-sm text-primary mt-1">
+                          Selected: {selectedOptionData.name}
+                        </p>
+                      )}
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleViewAll(category.id);
+                        }}
+                      >
+                        View all
+                      </Button>
+                      {isExpanded ? (
+                        <ChevronUp className="h-4 w-4" />
+                      ) : (
+                        <ChevronDown className="h-4 w-4" />
+                      )}
+                    </div>
                   </Button>
-                  {isExpanded ? (
-                    <ChevronUp className="h-5 w-5 text-muted-foreground" />
-                  ) : (
-                    <ChevronDown className="h-5 w-5 text-muted-foreground" />
-                  )}
-                </div>
-              </Button>
+                </CollapsibleTrigger>
 
-              {isExpanded && (
-                <CardContent>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-                    {categoryOptions.map((option) => {
-                      const isSelected = selections[category.id] === option.id;
-                      
-                      return (
-                        <div
-                          key={option.id}
-                          onClick={() => handleOptionSelect(category.id, option.id)}
-                          className={`relative cursor-pointer rounded-lg border-2 transition-all duration-200 hover:shadow-md ${
-                            isSelected
-                              ? 'border-primary bg-primary/5'
-                              : 'border-border bg-card hover:border-primary/50'
-                          }`}
-                        >
-                          {option.image_url ? (
-                            <div className="aspect-square rounded-t-lg overflow-hidden">
-                              <img
-                                src={option.image_url}
-                                alt={option.name}
-                                className="w-full h-full object-cover"
-                              />
-                            </div>
-                          ) : (
-                            <div className="aspect-square bg-muted rounded-t-lg flex items-center justify-center">
-                              <span className="text-2xl font-bold text-muted-foreground">
-                                {option.name.charAt(0)}
-                              </span>
-                            </div>
-                          )}
-                          
-                          <div className="p-3">
-                            <h5 className="font-medium text-foreground text-sm">{option.name}</h5>
-                            {option.description && (
-                              <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
-                                {option.description}
-                              </p>
+                <CollapsibleContent>
+                  <CardContent className="pt-0">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                      {categoryOptions.map((option) => {
+                        const isSelected = selections[category.id] === option.id;
+                        
+                        return (
+                          <Card
+                            key={option.id}
+                            className={`cursor-pointer transition-all duration-200 hover:shadow-md ${
+                              isSelected
+                                ? 'ring-2 ring-primary bg-primary/5'
+                                : 'hover:ring-1 hover:ring-primary/50'
+                            }`}
+                            onClick={() => handleOptionSelect(category.id, option.id)}
+                          >
+                            {option.image_url ? (
+                              <div className="aspect-square rounded-t-lg overflow-hidden">
+                                <img
+                                  src={option.image_url}
+                                  alt={option.name}
+                                  className="w-full h-full object-cover"
+                                />
+                              </div>
+                            ) : (
+                              <div className="aspect-square bg-muted rounded-t-lg flex items-center justify-center">
+                                <span className="text-2xl font-bold text-muted-foreground">
+                                  {option.name.charAt(0)}
+                                </span>
+                              </div>
                             )}
-                          </div>
+                            
+                            <CardContent className="p-3">
+                              <h5 className="font-medium text-foreground text-sm">{option.name}</h5>
+                              {option.description && (
+                                <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
+                                  {option.description}
+                                </p>
+                              )}
+                            </CardContent>
 
-                          {isSelected && (
-                            <div className="absolute top-2 right-2 w-6 h-6 bg-primary rounded-full flex items-center justify-center shadow-md">
-                              <svg className="w-4 h-4 text-primary-foreground" fill="currentColor" viewBox="0 0 20 20">
-                                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                              </svg>
-                            </div>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
-                </CardContent>
-              )}
-            </Card>
+                            {isSelected && (
+                              <div className="absolute top-2 right-2 w-6 h-6 bg-primary rounded-full flex items-center justify-center shadow-md">
+                                <svg className="w-4 h-4 text-primary-foreground" fill="currentColor" viewBox="0 0 20 20">
+                                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                </svg>
+                              </div>
+                            )}
+                          </Card>
+                        );
+                      })}
+                    </div>
+                  </CardContent>
+                </CollapsibleContent>
+              </Card>
+            </Collapsible>
           );
         })}
-      </div>
+
+        {/* Preview Modal */}
+        {previewImage && (
+          <div 
+            className="fixed inset-0 bg-background/80 backdrop-blur-sm flex items-center justify-center p-4 z-50"
+            onClick={() => setPreviewImage(null)}
+          >
+            <div className="max-w-4xl max-h-full">
+              <img
+                src={previewImage}
+                alt="Preview"
+                className="max-w-full max-h-full object-contain rounded-lg"
+              />
+            </div>
+          </div>
+        )}
+
+        {Object.keys(selections).length > 0 && (
+          <Alert className="mt-6">
+            <Sparkles className="h-4 w-4" />
+            <AlertDescription>
+              <span className="font-medium">Your Design Preferences:</span>
+              <div className="space-y-1 mt-2">
+                {Object.entries(selections).map(([categoryId, optionId]) => {
+                  const category = categories.find(c => c.id === categoryId);
+                  const option = options.find(o => o.id === optionId);
+                  
+                  if (!category || !option) return null;
+                  
+                  return (
+                    <p key={categoryId} className="text-sm">
+                      <span className="font-medium">{category.name}:</span> {option.name}
+                    </p>
+                  );
+                })}
+              </div>
+            </AlertDescription>
+          </Alert>
+        )}
       </CardContent>
-
-      {/* Preview Modal */}
-      {previewImage && (
-        <div 
-          className="fixed inset-0 bg-background/80 backdrop-blur-sm flex items-center justify-center p-4 z-50"
-          onClick={() => setPreviewImage(null)}
-        >
-          <div className="max-w-4xl max-h-full">
-            <img
-              src={previewImage}
-              alt="Preview"
-              className="max-w-full max-h-full object-contain rounded-lg"
-            />
-          </div>
-        </div>
-      )}
-
-      {Object.keys(selections).length > 0 && (
-        <Alert className="mt-6">
-          <Sparkles className="h-4 w-4" />
-          <AlertDescription>
-            <strong>Your Design Preferences:</strong>
-          <div className="space-y-1">
-            {Object.entries(selections).map(([categoryId, optionId]) => {
-              const category = categories.find(c => c.id === categoryId);
-              const option = options.find(o => o.id === optionId);
-              
-              if (!category || !option) return null;
-              
-              return (
-                <p key={categoryId} className="text-sm text-foreground">
-                  <strong>{category.name}:</strong> {option.name}
-                </p>
-              );
-            })}
-          </div>
-          </AlertDescription>
-        </Alert>
-      )}
     </Card>
   );
 };
