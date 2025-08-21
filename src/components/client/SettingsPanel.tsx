@@ -418,7 +418,6 @@ export const SettingsPanel: React.FC = () => {
           </div>
         </form>
         </CardContent>
-        </CardContent>
       </Card>
     </div>
   );
