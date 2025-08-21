@@ -238,6 +238,13 @@ export const BuyProductPanel: React.FC = () => {
                   Upload Files
                 </label>
                 <div className="border-2 border-dashed border-gray-300 rounded-md p-4">
+                  <input
+                    type="file"
+                    onChange={handleFileUpload}
+                    multiple
+                    className="hidden"
+                    id="file-upload"
+                  />
                   <label
                     htmlFor="file-upload"
                     className="cursor-pointer flex flex-col items-center"
