@@ -1,24 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
-
-export interface DesignEnhancerCategory {
-  id: string;
-  name: string;
-  slug: string;
-  description: string;
-  is_active: boolean;
-  sort_order: number;
-}
-
-export interface DesignEnhancerOption {
-  id: string;
-  category_id: string;
-  name: string;
-  description: string;
-  image_url?: string;
-  is_active: boolean;
-  sort_order: number;
-}
+import type { DesignEnhancerCategory, DesignEnhancerOption } from '../types';
 
 export interface RequestEnhancerSelection {
   id: string;

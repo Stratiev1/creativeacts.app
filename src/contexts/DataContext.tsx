@@ -1,46 +1,5 @@
 import React, { createContext, useContext, useState } from 'react';
-
-export interface Request {
-  id: string;
-  title: string;
-  description: string;
-  status: 'current' | 'finished' | 'pending';
-  createdAt: string;
-  files: string[];
-  clientId: string;
-  notes?: string;
-}
-
-export interface ChatMessage {
-  id: string;
-  senderId: string;
-  senderName: string;
-  senderRole: 'client' | 'admin';
-  message: string;
-  timestamp: string;
-  attachments?: string[];
-  chatId: string;
-}
-
-export interface Chat {
-  id: string;
-  clientId: string;
-  clientName: string;
-  lastMessage?: string;
-  lastActivity: string;
-  unread: number;
-}
-
-export interface Client {
-  id: string;
-  name: string;
-  email: string;
-  avatar?: string;
-  subscriptions: any[];
-  totalRequests: number;
-  totalOrders: number;
-  joinedAt: string;
-}
+import type { Request, ChatMessage, Chat, Client } from '../types';
 
 interface DataContextType {
   requests: Request[];

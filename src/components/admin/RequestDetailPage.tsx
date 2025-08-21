@@ -1,6 +1,12 @@
 import React, { useState } from 'react';
-import { useData, Request } from '../../contexts/DataContext';
+import { useData } from '../../contexts/DataContext';
+import type { Request } from '../../types';
 import { ArrowLeft, Upload, X, FileText, Clock, CheckCircle, AlertCircle, User } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 
 interface RequestDetailPageProps {
   request: Request;
@@ -26,17 +32,6 @@ export const RequestDetailPage: React.FC<RequestDetailPageProps> = ({ request, o
     }
   };
 
-  const getStatusColor = (status: Request['status']) => {
-    switch (status) {
-      case 'current':
-        return 'bg-blue-50 text-blue-700 border-blue-200';
-      case 'finished':
-        return 'bg-green-50 text-green-700 border-green-200';
-      case 'pending':
-        return 'bg-yellow-50 text-yellow-700 border-yellow-200';
-    }
-  };
-
   const handleStatusChange = (newStatus: Request['status']) => {
     updateRequestStatus(request.id, newStatus);
   };
@@ -52,7 +47,6 @@ export const RequestDetailPage: React.FC<RequestDetailPageProps> = ({ request, o
   };
 
   const handleSaveNotes = () => {
-    // In a real app, this would update the request notes
     alert('Notes saved successfully');
   };
 
@@ -61,126 +55,132 @@ export const RequestDetailPage: React.FC<RequestDetailPageProps> = ({ request, o
   };
 
   return (
-    <div className="h-full bg-white">
+    <div className="space-y-6">
       {/* Header */}
-      <div className="border-b border-gray-200 p-6">
-        <div className="flex items-center justify-between mb-4">
-          <button
+      <div className="flex items-center justify-between">
+        <div className="flex items-center space-x-4">
+          <Button
+            variant="ghost"
+            size="icon"
             onClick={onBack}
-            className="flex items-center text-gray-600 hover:text-gray-900 transition-colors"
           >
-            <ArrowLeft className="h-5 w-5 mr-2" />
-            Back to Requests
-          </button>
-          <div className="flex items-center space-x-3">
-            {request.status === 'current' && (
-              <button
-                onClick={() => handleStatusChange('finished')}
-                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
-              >
-                Mark Complete
-              </button>
-            )}
-            {request.status === 'pending' && (
-              <button
-                onClick={() => handleStatusChange('current')}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-              >
-                Start Working
-              </button>
-            )}
-            {request.status === 'finished' && (
-              <button
-                onClick={() => handleStatusChange('current')}
-                className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
-              >
-                Reopen
-              </button>
-            )}
+            <ArrowLeft className="h-4 w-4" />
+          </Button>
+          <div>
+            <h1 className="text-2xl font-bold text-foreground">Request Details</h1>
+            <p className="text-muted-foreground">{generateRequestId(request.id)}</p>
           </div>
         </div>
 
-        <div className="flex items-center space-x-4 mb-4">
-          <div className="flex items-center space-x-2">
-            {getStatusIcon(request.status)}
-            <span className={`inline-flex px-3 py-1 text-sm font-medium rounded-full border capitalize ${getStatusColor(request.status)}`}>
-              {request.status}
-            </span>
-          </div>
-          <span className="text-sm text-gray-500">
-            {generateRequestId(request.id)}
-          </span>
-          {client && (
-            <div className="flex items-center text-sm text-gray-600">
-              <User className="h-4 w-4 mr-1" />
-              {client.name}
-            </div>
+        <div className="flex items-center space-x-3">
+          {request.status === 'current' && (
+            <Button onClick={() => handleStatusChange('finished')}>
+              Mark Complete
+            </Button>
+          )}
+          {request.status === 'pending' && (
+            <Button onClick={() => handleStatusChange('current')}>
+              Start Working
+            </Button>
+          )}
+          {request.status === 'finished' && (
+            <Button variant="outline" onClick={() => handleStatusChange('current')}>
+              Reopen
+            </Button>
           )}
         </div>
-
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">{request.title}</h1>
-        <p className="text-gray-600">
-          Created: {new Date(request.createdAt).toLocaleDateString()}
-        </p>
       </div>
 
-      {/* Content */}
-      <div className="p-6 space-y-8">
-        {/* Description */}
-        <div>
-          <h2 className="text-lg font-semibold text-gray-900 mb-3">Description</h2>
-          <div className="bg-gray-50 rounded-lg p-4">
-            <p className="text-gray-700">{request.description}</p>
+      {/* Request Info Card */}
+      <Card>
+        <CardHeader>
+          <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-2">
+              {getStatusIcon(request.status)}
+              <Badge variant={
+                request.status === 'finished' ? 'default' : 
+                request.status === 'current' ? 'secondary' : 
+                'outline'
+              } className="capitalize">
+                {request.status}
+              </Badge>
+            </div>
+            {client && (
+              <div className="flex items-center text-sm text-muted-foreground">
+                <User className="h-4 w-4 mr-1" />
+                {client.name}
+              </div>
+            )}
           </div>
-        </div>
+          <CardTitle className="text-xl">{request.title}</CardTitle>
+          <p className="text-muted-foreground">
+            Created: {new Date(request.createdAt).toLocaleDateString()}
+          </p>
+        </CardHeader>
+      </Card>
 
-        {/* Notes */}
-        <div>
-          <h2 className="text-lg font-semibold text-gray-900 mb-3">Notes</h2>
-          <div className="space-y-3">
-            <textarea
+      {/* Description */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Description</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-foreground">{request.description}</p>
+        </CardContent>
+      </Card>
+
+      {/* Notes */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Notes</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div>
+            <Label htmlFor="notes">Add notes about this request</Label>
+            <Textarea
+              id="notes"
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               rows={4}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="Add notes about this request..."
             />
-            <button
-              onClick={handleSaveNotes}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-            >
-              Save Notes
-            </button>
           </div>
-        </div>
+          <Button onClick={handleSaveNotes}>
+            Save Notes
+          </Button>
+        </CardContent>
+      </Card>
 
-        {/* Attached Files */}
-        <div>
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="text-lg font-semibold text-gray-900">Attached Files</h2>
-            <button
+      {/* Attached Files */}
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <CardTitle>Attached Files</CardTitle>
+            <Button
+              variant="outline"
+              size="sm"
               onClick={() => setShowAddFiles(true)}
-              className="px-3 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm"
             >
               Add Files
-            </button>
+            </Button>
           </div>
-
+        </CardHeader>
+        <CardContent>
           <div className="space-y-3">
             {/* Original Files */}
             {request.files.map((file, index) => (
-              <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+              <div key={index} className="flex items-center justify-between p-3 bg-muted rounded-lg">
                 <div className="flex items-center">
-                  <FileText className="h-5 w-5 text-gray-400 mr-3" />
-                  <span className="text-gray-700">{file}</span>
+                  <FileText className="h-5 w-5 text-muted-foreground mr-3" />
+                  <span className="text-foreground">{file}</span>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <button className="text-blue-600 hover:text-blue-700 text-sm">
+                  <Button variant="ghost" size="sm">
                     Download
-                  </button>
-                  <button className="text-red-600 hover:text-red-700 text-sm">
+                  </Button>
+                  <Button variant="ghost" size="sm">
                     Remove
-                  </button>
+                  </Button>
                 </div>
               </div>
             ))}
@@ -191,65 +191,63 @@ export const RequestDetailPage: React.FC<RequestDetailPageProps> = ({ request, o
                 <div className="flex items-center">
                   <FileText className="h-5 w-5 text-blue-500 mr-3" />
                   <span className="text-blue-700">{file}</span>
-                  <span className="ml-2 text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded">New</span>
+                  <Badge variant="secondary" className="ml-2">New</Badge>
                 </div>
-                <button
+                <Button
+                  variant="ghost"
+                  size="icon"
                   onClick={() => removeNewFile(index)}
-                  className="text-red-600 hover:text-red-700"
                 >
                   <X className="h-4 w-4" />
-                </button>
+                </Button>
               </div>
             ))}
 
             {request.files.length === 0 && newFiles.length === 0 && (
-              <div className="text-center py-8 text-gray-500">
+              <div className="text-center py-8 text-muted-foreground">
                 No files attached to this request
               </div>
             )}
           </div>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
 
       {/* Add Files Modal */}
       {showAddFiles && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-md">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Add Files</h3>
-            
-            <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center mb-4">
-              <input
-                type="file"
-                onChange={handleFileUpload}
-                multiple
-                className="hidden"
-                id="file-upload"
-              />
-              <label htmlFor="file-upload" className="cursor-pointer">
-                <Upload className="h-8 w-8 text-gray-400 mx-auto mb-2" />
-                <p className="text-gray-600">Click to upload files</p>
-                <p className="text-xs text-gray-400 mt-1">PDF, JPG, PNG up to 10MB each</p>
-              </label>
-            </div>
+        <div className="fixed inset-0 bg-background/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <Card className="w-full max-w-md">
+            <CardHeader>
+              <CardTitle>Add Files</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="border-2 border-dashed border-border rounded-lg p-6 text-center">
+                <input
+                  type="file"
+                  onChange={handleFileUpload}
+                  multiple
+                  className="hidden"
+                  id="file-upload"
+                />
+                <label htmlFor="file-upload" className="cursor-pointer">
+                  <Upload className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
+                  <p className="text-muted-foreground">Click to upload files</p>
+                  <p className="text-xs text-muted-foreground mt-1">PDF, JPG, PNG up to 10MB each</p>
+                </label>
+              </div>
 
-            <div className="flex justify-end space-x-3">
-              <button
-                onClick={() => setShowAddFiles(false)}
-                className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={() => {
-                  // In a real app, this would save the files
-                  setShowAddFiles(false);
-                }}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-              >
-                Add Files
-              </button>
-            </div>
-          </div>
+              <div className="flex justify-end space-x-3">
+                <Button
+                  variant="outline"
+                  onClick={() => setShowAddFiles(false)}
+                >
+                  Cancel
+                </Button>
+                <Button onClick={() => setShowAddFiles(false)}>
+                  Add Files
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       )}
     </div>

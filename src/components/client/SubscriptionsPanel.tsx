@@ -1,7 +1,7 @@
 import React from 'react';
 import { CreditCard, Calendar, DollarSign, AlertCircle, Loader2, CheckCircle, XCircle } from 'lucide-react';
 import { useSubscription } from '../../hooks/useSubscription';
-import { products } from '../../stripe-config';
+import { products } from '../../config/stripe';
 import { useStripe } from '../../hooks/useStripe';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -34,23 +34,9 @@ export const SubscriptionsPanel: React.FC = () => {
     }
   };
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'active':
-      case 'trialing':
-        return 'bg-green-50 text-green-700 border-green-200';
-      case 'canceled':
-      case 'unpaid':
-        return 'bg-red-50 text-red-700 border-red-200';
-      default:
-        return 'bg-yellow-50 text-yellow-700 border-yellow-200';
-    }
-  };
-
   if (isLoading) {
     return (
       <div className="space-y-6">
-        <h2 className="text-2xl font-bold text-foreground">Subscriptions</h2>
         <div className="flex items-center justify-center py-12">
           <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
         </div>
@@ -61,7 +47,6 @@ export const SubscriptionsPanel: React.FC = () => {
   if (error) {
     return (
       <div className="space-y-6">
-        <h2 className="text-2xl font-bold text-foreground">Subscriptions</h2>
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
           <AlertDescription>
@@ -92,50 +77,50 @@ export const SubscriptionsPanel: React.FC = () => {
           </CardHeader>
 
           <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-            {subscription.current_period_end && (
-              <div className="flex items-center space-x-2">
-                <Calendar className="h-4 w-4 text-muted-foreground" />
-                <div>
-                  <p className="text-sm text-muted-foreground">
-                    {subscription.cancel_at_period_end ? 'Expires' : 'Next billing'}
-                  </p>
-                  <p className="font-medium text-foreground">
-                    {new Date(subscription.current_period_end * 1000).toLocaleDateString()}
-                  </p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+              {subscription.current_period_end && (
+                <div className="flex items-center space-x-2">
+                  <Calendar className="h-4 w-4 text-muted-foreground" />
+                  <div>
+                    <p className="text-sm text-muted-foreground">
+                      {subscription.cancel_at_period_end ? 'Expires' : 'Next billing'}
+                    </p>
+                    <p className="font-medium text-foreground">
+                      {new Date(subscription.current_period_end * 1000).toLocaleDateString()}
+                    </p>
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
 
-            {subscription.payment_method_last4 && (
-              <div className="flex items-center space-x-2">
-                <CreditCard className="h-4 w-4 text-muted-foreground" />
-                <div>
-                  <p className="text-sm text-muted-foreground">Payment method</p>
-                  <p className="font-medium text-foreground">
-                    {subscription.payment_method_brand?.toUpperCase()} •••• {subscription.payment_method_last4}
-                  </p>
+              {subscription.payment_method_last4 && (
+                <div className="flex items-center space-x-2">
+                  <CreditCard className="h-4 w-4 text-muted-foreground" />
+                  <div>
+                    <p className="text-sm text-muted-foreground">Payment method</p>
+                    <p className="font-medium text-foreground">
+                      {subscription.payment_method_brand?.toUpperCase()} •••• {subscription.payment_method_last4}
+                    </p>
+                  </div>
                 </div>
-              </div>
-            )}
-          </div>
+              )}
+            </div>
 
-          {subscription.cancel_at_period_end && (
-            <Alert className="mb-4">
-              <AlertCircle className="h-4 w-4" />
-              <AlertDescription>
-                Your subscription will end on {getSubscriptionEndDate()?.toLocaleDateString()}. 
-                You'll continue to have access until then.
-              </AlertDescription>
-            </Alert>
-          )}
+            {subscription.cancel_at_period_end && (
+              <Alert className="mb-4">
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>
+                  Your subscription will end on {getSubscriptionEndDate()?.toLocaleDateString()}. 
+                  You'll continue to have access until then.
+                </AlertDescription>
+              </Alert>
+            )}
           </CardContent>
         </Card>
       ) : (
         <Card>
           <CardContent className="pt-6 text-center">
             <CreditCard className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-foreground mb-2">No Active Subscription</h3>
+            <CardTitle className="mb-2">No Active Subscription</CardTitle>
             <p className="text-muted-foreground mb-4">Choose a subscription plan to get started</p>
           </CardContent>
         </Card>
@@ -143,7 +128,7 @@ export const SubscriptionsPanel: React.FC = () => {
 
       {/* Available Plans */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-foreground">Available Plans</h3>
+        <CardTitle>Available Plans</CardTitle>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {subscriptionProducts.map((product) => {
             const isCurrentPlan = subscription?.price_id === product.priceId;
@@ -169,24 +154,24 @@ export const SubscriptionsPanel: React.FC = () => {
                 </CardHeader>
 
                 <CardContent>
-                <Button
-                  onClick={() => purchaseProduct(product)}
-                  disabled={isCurrentPlan || isCheckoutLoading}
-                  className="w-full"
-                  variant={isCurrentPlan ? "secondary" : "default"}
-                  size="lg"
-                >
-                  {isCheckoutLoading ? (
-                    <>
-                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                      Processing...
-                    </>
-                  ) : isCurrentPlan ? (
-                    'Current Plan'
-                  ) : (
-                    'Subscribe'
-                  )}
-                </Button>
+                  <Button
+                    onClick={() => purchaseProduct(product)}
+                    disabled={isCurrentPlan || isCheckoutLoading}
+                    className="w-full"
+                    variant={isCurrentPlan ? "secondary" : "default"}
+                    size="lg"
+                  >
+                    {isCheckoutLoading ? (
+                      <>
+                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                        Processing...
+                      </>
+                    ) : isCurrentPlan ? (
+                      'Current Plan'
+                    ) : (
+                      'Subscribe'
+                    )}
+                  </Button>
                 </CardContent>
               </Card>
             );

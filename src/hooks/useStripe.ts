@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { supabase } from '../lib/supabase';
-import { Product } from '../stripe-config';
+import type { Product } from '../types';
 
 interface CheckoutOptions {
   priceId: string;

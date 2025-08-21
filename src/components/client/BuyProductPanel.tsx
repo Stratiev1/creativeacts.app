@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { ShoppingBag, CreditCard, AlertCircle, Loader2, FileText, ArrowRight, Upload, X } from 'lucide-react';
-import { products } from '../../stripe-config';
+import { ShoppingBag, CreditCard, AlertCircle, Loader2, ArrowRight, Upload, X } from 'lucide-react';
+import { products } from '../../config/stripe';
 import { useStripe } from '../../hooks/useStripe';
 import { useData } from '../../contexts/DataContext';
 import { useAuth } from '../../contexts/AuthContext';
@@ -59,7 +59,7 @@ export const BuyProductPanel: React.FC = () => {
     const newRequest = {
       ...formData,
       clientId: user.id,
-      status: 'pending'
+      status: 'pending' as const
     };
 
     addRequest(newRequest);
@@ -104,16 +104,6 @@ export const BuyProductPanel: React.FC = () => {
     }).format(price);
   };
 
-  const getProductTypeLabel = (mode: 'payment' | 'subscription') => {
-    return mode === 'subscription' ? 'Subscription' : 'One-time Payment';
-  };
-
-  const getProductTypeColor = (mode: 'payment' | 'subscription') => {
-    return mode === 'subscription' 
-      ? 'bg-blue-100 text-blue-800' 
-      : 'bg-green-100 text-green-800';
-  };
-
   return (
     <div className="space-y-6">
       {error && (
@@ -135,7 +125,7 @@ export const BuyProductPanel: React.FC = () => {
               <div className="flex items-center justify-between mb-3">
                 <CardTitle className="text-lg">{product.name}</CardTitle>
                 <Badge variant={product.mode === 'subscription' ? 'default' : 'secondary'}>
-                  {getProductTypeLabel(product.mode)}
+                  {product.mode === 'subscription' ? 'Subscription' : 'One-time Payment'}
                 </Badge>
               </div>
               
@@ -154,25 +144,25 @@ export const BuyProductPanel: React.FC = () => {
             </CardHeader>
 
             <CardContent>
-            <Button
-              onClick={() => handleBuyClick(product.id)}
-              disabled={isLoading && selectedProduct === product.id}
-              className="w-full"
-              size="lg"
-              onMouseDown={() => setSelectedProduct(product.id)}
-            >
-              {isLoading && selectedProduct === product.id ? (
-                <>
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  Processing...
-                </>
-              ) : (
-                <>
-                  <CreditCard className="h-4 w-4 mr-2" />
-                  {product.mode === 'subscription' ? 'Subscribe Now' : 'Create Request & Buy'}
-                </>
-              )}
-            </Button>
+              <Button
+                onClick={() => handleBuyClick(product.id)}
+                disabled={isLoading && selectedProduct === product.id}
+                className="w-full"
+                size="lg"
+                onMouseDown={() => setSelectedProduct(product.id)}
+              >
+                {isLoading && selectedProduct === product.id ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    Processing...
+                  </>
+                ) : (
+                  <>
+                    <CreditCard className="h-4 w-4 mr-2" />
+                    {product.mode === 'subscription' ? 'Subscribe Now' : 'Create Request & Buy'}
+                  </>
+                )}
+              </Button>
             </CardContent>
           </Card>
         ))}
@@ -199,9 +189,7 @@ export const BuyProductPanel: React.FC = () => {
 
             <form onSubmit={(e) => { e.preventDefault(); handlePurchase(); }} className="space-y-4">
               <div>
-                <Label htmlFor="title">
-                  Title *
-                </Label>
+                <Label htmlFor="title">Title *</Label>
                 <Input
                   id="title"
                   value={formData.title}
@@ -212,9 +200,7 @@ export const BuyProductPanel: React.FC = () => {
               </div>
 
               <div>
-                <Label htmlFor="description">
-                  Description *
-                </Label>
+                <Label htmlFor="description">Description *</Label>
                 <Textarea
                   id="description"
                   value={formData.description}
@@ -226,9 +212,7 @@ export const BuyProductPanel: React.FC = () => {
               </div>
 
               <div>
-                <Label htmlFor="notes">
-                  Additional Notes
-                </Label>
+                <Label htmlFor="notes">Additional Notes</Label>
                 <Textarea
                   id="notes"
                   value={formData.notes}
@@ -239,10 +223,15 @@ export const BuyProductPanel: React.FC = () => {
               </div>
 
               <div>
-                <Label>
-                  Upload Files
-                </Label>
+                <Label>Upload Files</Label>
                 <div className="border-2 border-dashed border-border rounded-md p-4">
+                  <input
+                    type="file"
+                    onChange={handleFileUpload}
+                    multiple
+                    className="hidden"
+                    id="file-upload"
+                  />
                   <label
                     htmlFor="file-upload"
                     className="cursor-pointer flex flex-col items-center"
@@ -279,9 +268,7 @@ export const BuyProductPanel: React.FC = () => {
               {/* Design Enhancer Toggle */}
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
-                  <Label>
-                    Design Request Enhancer
-                  </Label>
+                  <Label>Design Request Enhancer</Label>
                   <p className="text-xs text-muted-foreground">
                     Help us understand your design preferences (optional)
                   </p>
@@ -300,7 +287,7 @@ export const BuyProductPanel: React.FC = () => {
                 />
               )}
 
-              <div className="flex justify-between items-center pt-4 border-t border-gray-200">
+              <div className="flex justify-between items-center pt-4 border-t border-border">
                 <div className="text-left">
                   <p className="text-sm text-muted-foreground">Total Amount</p>
                   <p className="text-2xl font-bold text-foreground">
