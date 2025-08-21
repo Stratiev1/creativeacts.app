@@ -98,7 +98,6 @@ export const Layout: React.FC<LayoutProps> = ({
                 </Button>
               )}
             </div>
-            </div>
           </div>
 
           {/* Navigation */}
@@ -146,35 +145,35 @@ export const Layout: React.FC<LayoutProps> = ({
                   </p>
                   <p className="text-xs text-muted-foreground truncate">
                     {getSubscriptionDisplay()}
-                  </p>
-                </div>
+                {!sidebarCollapsed && (
+                  <span className="font-semibold text-foreground">Creative Acts</span>
+                )}
+              </div>
+              {!sidebarCollapsed && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setSidebarCollapsed(true)}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
               )}
             </div>
-            {!sidebarCollapsed && (
+          </div>
+
+          {/* Expand button when collapsed */}
+          {sidebarCollapsed && (
+            <div className="p-2 border-b border-border">
               <Button
                 variant="ghost"
                 size="sm"
                 className="w-full justify-start"
                 onClick={signOut}
-              >
-                <LogOut className="h-4 w-4 mr-2" />
-                Sign out
-              </Button>
-            )}
-          </div>
-
-          {/* Expand button when collapsed */}
-          {sidebarCollapsed && (
-            <div className="p-2 border-t border-border">
-              <Button
-                variant="ghost"
-                size="sm"
                 onClick={() => setSidebarCollapsed(false)}
                 className="w-full"
-              >
+                <LogOut className="h-4 w-4 mr-2" />
                 <Menu className="h-4 w-4" />
               </Button>
-            </div>
           )}
         </div>
       )}
