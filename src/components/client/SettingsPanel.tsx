@@ -1,6 +1,13 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { User, Mail, Lock, Camera, Bell, MessageSquare, FileText, CreditCard, Shield } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Separator } from "@/components/ui/separator";
 
 export const SettingsPanel: React.FC = () => {
   const { user } = useAuth();
@@ -78,123 +85,118 @@ export const SettingsPanel: React.FC = () => {
   return (
     <div className="space-y-8">
       {success && (
-        <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-          <p className="text-sm text-green-600">{success}</p>
+        <div className="bg-green-50 border border-green-200 rounded-md p-4">
+          <p className="text-sm text-green-700">{success}</p>
         </div>
       )}
 
       {/* Profile Information */}
-      <div className="bg-primary-grey rounded-xl p-6">
-        <div className="flex items-center space-x-2 mb-6">
-          <User className="h-5 w-5 text-primary-orange" />
-          <h3 className="text-lg font-semibold text-primary-black">Profile Information</h3>
-        </div>
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center space-x-2">
+            <User className="h-5 w-5" />
+            <span>Profile Information</span>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
         
         <form onSubmit={handleProfileUpdate} className="space-y-6">
           {/* Avatar */}
           <div className="flex items-center space-x-4">
-            <div className="w-20 h-20 bg-gray-200 rounded-full flex items-center justify-center overflow-hidden">
-              {user?.avatar ? (
-                <img src={user.avatar} alt={user.name} className="w-full h-full object-cover" />
-              ) : (
-                <User className="h-8 w-8 text-gray-600" />
-              )}
-            </div>
-            <button
+            <Avatar className="h-20 w-20">
+              <AvatarImage src={user?.avatar} alt={user?.user_metadata?.name} />
+              <AvatarFallback>
+                <User className="h-8 w-8" />
+              </AvatarFallback>
+            </Avatar>
+            <Button
               type="button"
+              variant="outline"
               onClick={handleAvatarUpload}
-              className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-xl text-sm font-medium text-gray-700 bg-primary-white hover:bg-primary-grey transition-colors"
             >
               <Camera className="h-4 w-4 mr-2" />
               Change Photo
-            </button>
+            </Button>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Name */}
             <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
-                Full Name
-              </label>
+              <Label htmlFor="name">Full Name</Label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <User className="h-4 w-4 text-gray-400" />
+                  <User className="h-4 w-4 text-muted-foreground" />
                 </div>
-                <input
+                <Input
                   id="name"
                   type="text"
                   value={formData.name}
                   onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                  className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-orange focus:border-transparent"
+                  className="pl-10"
                 />
               </div>
             </div>
 
             {/* Email */}
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                Email Address
-              </label>
+              <Label htmlFor="email">Email Address</Label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Mail className="h-4 w-4 text-gray-400" />
+                  <Mail className="h-4 w-4 text-muted-foreground" />
                 </div>
-                <input
+                <Input
                   id="email"
                   type="email"
                   value={formData.email}
                   onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
-                  className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-orange focus:border-transparent"
+                  className="pl-10"
                 />
               </div>
             </div>
 
             {/* Phone */}
             <div>
-              <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
-                Phone Number
-              </label>
-              <input
+              <Label htmlFor="phone">Phone Number</Label>
+              <Input
                 id="phone"
                 type="tel"
                 value={formData.phone}
                 onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
-                className="block w-full px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-orange focus:border-transparent"
               />
             </div>
 
             {/* Company */}
             <div>
-              <label htmlFor="company" className="block text-sm font-medium text-gray-700 mb-2">
-                Company Name
-              </label>
-              <input
+              <Label htmlFor="company">Company Name</Label>
+              <Input
                 id="company"
                 type="text"
                 value={formData.company}
                 onChange={(e) => setFormData(prev => ({ ...prev, company: e.target.value }))}
-                className="block w-full px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-orange focus:border-transparent"
               />
             </div>
           </div>
 
           <div className="flex justify-end">
-            <button
+            <Button
               type="submit"
-              className="px-6 py-3 bg-primary-black text-primary-white rounded-xl shadow-lg hover:bg-opacity-90 transition-all duration-200"
             >
               Update Profile
-            </button>
+            </Button>
           </div>
         </form>
-      </div>
+        </CardContent>
+      </Card>
 
       {/* Security Settings */}
-      <div className="bg-primary-grey rounded-xl p-6">
-        <div className="flex items-center space-x-2 mb-6">
-          <Shield className="h-5 w-5 text-primary-orange" />
-          <h3 className="text-lg font-semibold text-primary-black">Security Settings</h3>
-        </div>
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center space-x-2">
+            <Shield className="h-5 w-5" />
+            <span>Security Settings</span>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
         
         <form onSubmit={handlePasswordUpdate} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -346,225 +348,150 @@ export const SettingsPanel: React.FC = () => {
                 >
                   <span
                     className={`inline-block h-4 w-4 transform rounded-full bg-primary-white transition-transform ${
-                      notifications.weeklyDigest ? 'translate-x-6' : 'translate-x-1'
-                    }`}
-                  />
-                </button>
-              </div>
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center space-x-2">
+            <Bell className="h-5 w-5" />
+            <span>Notification Preferences</span>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
 
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
                   <Mail className="h-4 w-4 text-gray-400" />
                   <div>
-                    <p className="text-sm font-medium text-gray-900">Marketing Emails</p>
+              <h4 className="font-medium text-foreground">General</h4>
                     <p className="text-xs text-gray-500">Product updates and promotions</p>
                   </div>
                 </div>
-                <button
+                  <Mail className="h-4 w-4 text-muted-foreground" />
                   type="button"
-                  onClick={() => handleNotificationChange('marketingEmails')}
-                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-all duration-200 ${
+                    <p className="text-sm font-medium text-foreground">Email Notifications</p>
+                    <p className="text-xs text-muted-foreground">Receive notifications via email</p>
                     notifications.marketingEmails ? 'bg-primary-orange' : 'bg-gray-200'
                   }`}
-                >
-                  <span
-                    className={`inline-block h-4 w-4 transform rounded-full bg-primary-white transition-transform ${
-                      notifications.marketingEmails ? 'translate-x-6' : 'translate-x-1'
-                    }`}
-                  />
-                </button>
-              </div>
-            </div>
-
-            {/* Project Notifications */}
-            <div className="space-y-4">
-              <h4 className="font-medium text-primary-black">Project Updates</h4>
+                <Switch
+                  checked={notifications.emailNotifications}
+                  onCheckedChange={() => handleNotificationChange('emailNotifications')}
+                />
               
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
                   <FileText className="h-4 w-4 text-gray-400" />
-                  <div>
+                  <Bell className="h-4 w-4 text-muted-foreground" />
                     <p className="text-sm font-medium text-gray-900">Request Updates</p>
-                    <p className="text-xs text-gray-500">Status changes on your requests</p>
-                  </div>
+                    <p className="text-sm font-medium text-foreground">Push Notifications</p>
+                    <p className="text-xs text-muted-foreground">Receive browser notifications</p>
                 </div>
                 <button
-                  type="button"
-                  onClick={() => handleNotificationChange('requestUpdates')}
-                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-all duration-200 ${
-                    notifications.requestUpdates ? 'bg-primary-orange' : 'bg-gray-200'
-                  }`}
-                >
-                  <span
-                    className={`inline-block h-4 w-4 transform rounded-full bg-primary-white transition-transform ${
-                      notifications.requestUpdates ? 'translate-x-6' : 'translate-x-1'
-                    }`}
-                  />
-                </button>
-              </div>
+                <Switch
+                  checked={notifications.pushNotifications}
+                  onCheckedChange={() => handleNotificationChange('pushNotifications')}
+                />
 
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
                   <MessageSquare className="h-4 w-4 text-gray-400" />
-                  <div>
+                  <Mail className="h-4 w-4 text-muted-foreground" />
                     <p className="text-sm font-medium text-gray-900">Chat Messages</p>
-                    <p className="text-xs text-gray-500">New messages from our team</p>
-                  </div>
+                    <p className="text-sm font-medium text-foreground">Weekly Digest</p>
+                    <p className="text-xs text-muted-foreground">Weekly summary of your activity</p>
                 </div>
                 <button
-                  type="button"
-                  onClick={() => handleNotificationChange('chatMessages')}
-                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-all duration-200 ${
-                    notifications.chatMessages ? 'bg-primary-orange' : 'bg-gray-200'
-                  }`}
-                >
-                  <span
-                    className={`inline-block h-4 w-4 transform rounded-full bg-primary-white transition-transform ${
-                      notifications.chatMessages ? 'translate-x-6' : 'translate-x-1'
-                    }`}
-                  />
-                </button>
-              </div>
+                <Switch
+                  checked={notifications.weeklyDigest}
+                  onCheckedChange={() => handleNotificationChange('weeklyDigest')}
+                />
 
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
                   <FileText className="h-4 w-4 text-gray-400" />
-                  <div>
+                  <Mail className="h-4 w-4 text-muted-foreground" />
                     <p className="text-sm font-medium text-gray-900">Project Deadlines</p>
-                    <p className="text-xs text-gray-500">Reminders about project milestones</p>
-                  </div>
+                    <p className="text-sm font-medium text-foreground">Marketing Emails</p>
+                    <p className="text-xs text-muted-foreground">Product updates and promotions</p>
                 </div>
                 <button
-                  type="button"
-                  onClick={() => handleNotificationChange('projectDeadlines')}
-                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-all duration-200 ${
-                    notifications.projectDeadlines ? 'bg-primary-orange' : 'bg-gray-200'
-                  }`}
-                >
-                  <span
-                    className={`inline-block h-4 w-4 transform rounded-full bg-primary-white transition-transform ${
-                      notifications.projectDeadlines ? 'translate-x-6' : 'translate-x-1'
-                    }`}
-                  />
-                </button>
-              </div>
+                <Switch
+                  checked={notifications.marketingEmails}
+                  onCheckedChange={() => handleNotificationChange('marketingEmails')}
+                />
 
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
                   <CreditCard className="h-4 w-4 text-gray-400" />
                   <div>
-                    <p className="text-sm font-medium text-gray-900">Billing Alerts</p>
+              <h4 className="font-medium text-foreground">Project Updates</h4>
                     <p className="text-xs text-gray-500">Payment and subscription updates</p>
                   </div>
                 </div>
-                <button
+                  <FileText className="h-4 w-4 text-muted-foreground" />
                   type="button"
-                  onClick={() => handleNotificationChange('billingAlerts')}
-                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-all duration-200 ${
+                    <p className="text-sm font-medium text-foreground">Request Updates</p>
+                    <p className="text-xs text-muted-foreground">Status changes on your requests</p>
                     notifications.billingAlerts ? 'bg-primary-orange' : 'bg-gray-200'
                   }`}
-                >
-                  <span
-                    className={`inline-block h-4 w-4 transform rounded-full bg-primary-white transition-transform ${
-                      notifications.billingAlerts ? 'translate-x-6' : 'translate-x-1'
-                    }`}
-                  />
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <div className="flex justify-end">
-            <button
+                <Switch
+                  checked={notifications.requestUpdates}
+                  onCheckedChange={() => handleNotificationChange('requestUpdates')}
+                />
               type="submit"
               className="px-6 py-3 bg-primary-black text-primary-white rounded-xl shadow-lg hover:bg-opacity-90 transition-all duration-200"
             >
               Update Notifications
-            </button>
+                  <MessageSquare className="h-4 w-4 text-muted-foreground" />
           </div>
-        </form>
-      </div>
+                    <p className="text-sm font-medium text-foreground">Chat Messages</p>
+                    <p className="text-xs text-muted-foreground">New messages from our team</p>
 
       {/* Change Password */}
-      <div className="bg-primary-grey rounded-xl p-6">
-        <div className="flex items-center space-x-2 mb-6">
-          <Lock className="h-5 w-5 text-primary-orange" />
-          <h3 className="text-lg font-semibold text-primary-black">Change Password</h3>
-        </div>
-        
-        <form onSubmit={handlePasswordUpdate} className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {/* Current Password */}
-            <div>
-              <label htmlFor="currentPassword2" className="block text-sm font-medium text-gray-700 mb-2">
-                Current Password
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Lock className="h-4 w-4 text-gray-400" />
+                <Switch
+                  checked={notifications.chatMessages}
+                  onCheckedChange={() => handleNotificationChange('chatMessages')}
+                />
+                  <Lock className="h-4 w-4 text-muted-foreground" />
                 </div>
-                <input
+                <Input
                   id="currentPassword2"
-                  type="password"
+                  <FileText className="h-4 w-4 text-muted-foreground" />
                   value={formData.currentPassword}
-                  onChange={(e) => setFormData(prev => ({ ...prev, currentPassword: e.target.value }))}
-                  className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-orange focus:border-transparent"
+                    <p className="text-sm font-medium text-foreground">Project Deadlines</p>
+                    <p className="text-xs text-muted-foreground">Reminders about project milestones</p>
                   required
                 />
-              </div>
-            </div>
-
-            {/* New Password */}
-            <div>
-              <label htmlFor="newPassword2" className="block text-sm font-medium text-gray-700 mb-2">
-                New Password
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Lock className="h-4 w-4 text-gray-400" />
-                </div>
-                <input
-                  id="newPassword2"
-                  type="password"
+                <Switch
+                  checked={notifications.projectDeadlines}
+                  onCheckedChange={() => handleNotificationChange('projectDeadlines')}
+                />
                   value={formData.newPassword}
                   onChange={(e) => setFormData(prev => ({ ...prev, newPassword: e.target.value }))}
-                  className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-orange focus:border-transparent"
+                  className="pl-10"
                   required
-                />
+                  <CreditCard className="h-4 w-4 text-muted-foreground" />
               </div>
-            </div>
-
+                    <p className="text-sm font-medium text-foreground">Billing Alerts</p>
+                    <p className="text-xs text-muted-foreground">Payment and subscription updates</p>
             {/* Confirm Password */}
             <div>
-              <label htmlFor="confirmPassword2" className="block text-sm font-medium text-gray-700 mb-2">
-                Confirm New Password
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Lock className="h-4 w-4 text-gray-400" />
-                </div>
-                <input
-                  id="confirmPassword2"
-                  type="password"
-                  value={formData.confirmPassword}
-                  onChange={(e) => setFormData(prev => ({ ...prev, confirmPassword: e.target.value }))}
-                  className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-orange focus:border-transparent"
-                  required
+                <Switch
+                  checked={notifications.billingAlerts}
+                  onCheckedChange={() => handleNotificationChange('billingAlerts')}
                 />
               </div>
             </div>
           </div>
 
           <div className="flex justify-end">
-            <button
+            <Button
               type="submit"
-              className="px-6 py-3 bg-primary-black text-primary-white rounded-xl shadow-lg hover:bg-opacity-90 transition-all duration-200"
-            >
               Update Password
-            </button>
-          </div>
+            </Button>
+            </Button>
         </form>
-      </div>
+        </CardContent>
+        </CardContent>
+      </Card>
     </div>
   );
 };

@@ -2,6 +2,10 @@ import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useSubscription } from '../hooks/useSubscription';
 import { LogOut, User, Menu, X, MessageSquare, FileText, Users, FolderOpen, CreditCard, Settings, ShoppingBag, Receipt, Home } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -63,39 +67,42 @@ export const Layout: React.FC<LayoutProps> = ({
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
+    <div className="min-h-screen bg-background flex">
       {/* Desktop Sidebar */}
       {showSidebar && (
-        <div className={`hidden lg:flex flex-col bg-primary-white border-r border-gray-200 transition-all duration-300 ${
+        <div className={`hidden lg:flex flex-col bg-card border-r border-border transition-all duration-300 ${
           sidebarCollapsed ? 'w-16' : 'w-64'
         }`}>
           {/* Sidebar Header */}
-          <div className="flex items-center justify-between p-4 border-b border-gray-200">
+          <div className="p-6 border-b border-border">
             <div className={`flex items-center ${sidebarCollapsed ? 'justify-center w-full' : 'space-x-2'}`}>
               <img src="/logo.svg" alt="Creative Acts" className="h-8 flex-shrink-0" />
               {!sidebarCollapsed && (
-                <span className="font-semibold text-primary-black">Creative Acts</span>
+                <span className="font-semibold text-foreground">Creative Acts</span>
               )}
             </div>
             {!sidebarCollapsed && (
-              <button
+              <Button
+                variant="ghost"
+                size="icon"
                 onClick={() => setSidebarCollapsed(true)}
-                className="p-1 rounded-md hover:bg-primary-grey transition-colors"
               >
-                <X className="h-5 w-5 text-gray-600" />
-              </button>
+                <X className="h-4 w-4" />
+              </Button>
             )}
           </div>
 
           {/* Expand button when collapsed */}
           {sidebarCollapsed && (
-            <div className="p-2 border-b border-gray-200">
-              <button
+            <div className="p-2 border-b border-border">
+              <Button
+                variant="ghost"
+                size="icon"
                 onClick={() => setSidebarCollapsed(false)}
-                className="w-full p-2 rounded-md hover:bg-primary-grey transition-colors flex items-center justify-center"
+                className="w-full"
               >
-                <Menu className="h-5 w-5 text-gray-600" />
-              </button>
+                <Menu className="h-4 w-4" />
+              </Button>
             </div>
           )}
 
@@ -107,18 +114,18 @@ export const Layout: React.FC<LayoutProps> = ({
                 const isActive = activeTab === tab.id;
                 return (
                   <li key={tab.id}>
-                    <button
+                    <Button
+                      variant={isActive ? "default" : "ghost"}
+                      className={cn(
+                        "w-full justify-start",
+                        sidebarCollapsed && "justify-center px-2"
+                      )}
                       onClick={() => handleTabClick(tab.id)}
-                      className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 ${
-                        isActive
-                          ? 'bg-primary-orange text-primary-white shadow-lg'
-                          : 'text-gray-700 hover:bg-primary-grey'
-                      } ${sidebarCollapsed ? 'justify-center px-2 py-2' : ''}`}
                       title={sidebarCollapsed ? tab.label : undefined}
                     >
-                      <IconComponent className="h-5 w-5 flex-shrink-0" />
+                      <IconComponent className="h-4 w-4 flex-shrink-0" />
                       {!sidebarCollapsed && <span className="ml-3">{tab.label}</span>}
-                    </button>
+                    </Button>
                   </li>
                 );
               })}
@@ -126,30 +133,34 @@ export const Layout: React.FC<LayoutProps> = ({
           </nav>
 
           {/* User Section */}
-          <div className="p-4 border-t border-gray-200">
+          <div className="p-4 border-t border-border">
             <div className={`flex items-center ${sidebarCollapsed ? 'justify-center' : 'space-x-3'}`}>
-              <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center overflow-hidden flex-shrink-0">
-                <User className="h-4 w-4 text-gray-600" />
-              </div>
+              <Avatar className="h-8 w-8">
+                <AvatarFallback>
+                  <User className="h-4 w-4" />
+                </AvatarFallback>
+              </Avatar>
               {!sidebarCollapsed && (
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-primary-black truncate">
+                  <p className="text-sm font-medium text-foreground truncate">
                     {user?.user_metadata?.name || user?.email}
                   </p>
-                  <p className="text-xs text-gray-500 truncate">
+                  <p className="text-xs text-muted-foreground truncate">
                     {getSubscriptionDisplay()}
                   </p>
                 </div>
               )}
             </div>
             {!sidebarCollapsed && (
-              <button
+              <Button
+                variant="ghost"
+                size="sm"
+                className="w-full mt-3 justify-start"
                 onClick={signOut}
-                className="w-full mt-3 flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-primary-grey rounded-lg transition-colors"
               >
-                <LogOut className="h-4 w-4 mr-3" />
+                <LogOut className="h-4 w-4 mr-2" />
                 Logout
-              </button>
+              </Button>
             )}
           </div>
         </div>
@@ -157,20 +168,21 @@ export const Layout: React.FC<LayoutProps> = ({
 
       {/* Mobile Menu Overlay */}
       {mobileMenuOpen && (
-        <div className="lg:hidden fixed inset-0 z-50 bg-primary-black bg-opacity-50" onClick={() => setMobileMenuOpen(false)}>
-          <div className="fixed inset-y-0 left-0 w-64 bg-primary-white shadow-xl" onClick={(e) => e.stopPropagation()}>
+        <div className="lg:hidden fixed inset-0 z-50 bg-background/80 backdrop-blur-sm" onClick={() => setMobileMenuOpen(false)}>
+          <div className="fixed inset-y-0 left-0 w-64 bg-card shadow-xl" onClick={(e) => e.stopPropagation()}>
             {/* Mobile Menu Header */}
-            <div className="flex items-center justify-between p-4 border-b border-gray-200">
+            <div className="flex items-center justify-between p-4 border-b border-border">
               <div className="flex items-center space-x-2">
                 <img src="/logo.svg" alt="Creative Acts" className="h-8" />
-                <span className="font-semibold text-primary-black">Creative Acts</span>
+                <span className="font-semibold text-foreground">Creative Acts</span>
               </div>
-              <button
+              <Button
+                variant="ghost"
+                size="icon"
                 onClick={() => setMobileMenuOpen(false)}
-                className="p-1 rounded-md hover:bg-primary-grey transition-colors"
               >
-                <X className="h-5 w-5 text-gray-600" />
-              </button>
+                <X className="h-4 w-4" />
+              </Button>
             </div>
 
             {/* Mobile Navigation */}
@@ -181,17 +193,14 @@ export const Layout: React.FC<LayoutProps> = ({
                   const isActive = activeTab === tab.id;
                   return (
                     <li key={tab.id}>
-                      <button
+                      <Button
+                        variant={isActive ? "default" : "ghost"}
+                        className="w-full justify-start"
                         onClick={() => handleTabClick(tab.id)}
-                        className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 ${
-                          isActive
-                            ? 'bg-primary-orange text-primary-white shadow-lg'
-                            : 'text-gray-700 hover:bg-primary-grey'
-                        }`}
                       >
-                        <IconComponent className="h-5 w-5 mr-3" />
+                        <IconComponent className="h-4 w-4 mr-2" />
                         {tab.label}
-                      </button>
+                      </Button>
                     </li>
                   );
                 })}
@@ -199,27 +208,31 @@ export const Layout: React.FC<LayoutProps> = ({
             </nav>
 
             {/* Mobile User Section */}
-            <div className="p-4 border-t border-gray-200">
+            <div className="p-4 border-t border-border">
               <div className="flex items-center space-x-3 mb-3">
-                <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center overflow-hidden">
-                  <User className="h-4 w-4 text-gray-600" />
-                </div>
+                <Avatar className="h-8 w-8">
+                  <AvatarFallback>
+                    <User className="h-4 w-4" />
+                  </AvatarFallback>
+                </Avatar>
                 <div>
-                  <p className="text-sm font-medium text-primary-black">
+                  <p className="text-sm font-medium text-foreground">
                     {user?.user_metadata?.name || user?.email}
                   </p>
-                  <p className="text-xs text-gray-500">
+                  <p className="text-xs text-muted-foreground">
                     {getSubscriptionDisplay()}
                   </p>
                 </div>
               </div>
-              <button
+              <Button
+                variant="ghost"
+                size="sm"
+                className="w-full justify-start"
                 onClick={signOut}
-                className="w-full flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-primary-grey rounded-lg transition-colors"
               >
-                <LogOut className="h-4 w-4 mr-3" />
+                <LogOut className="h-4 w-4 mr-2" />
                 Logout
-              </button>
+              </Button>
             </div>
           </div>
         </div>
@@ -228,25 +241,29 @@ export const Layout: React.FC<LayoutProps> = ({
       {/* Main Content */}
       <div className="flex-1 flex flex-col min-w-0">
         {/* Top Header */}
-        <header className="sticky top-0 z-30 bg-primary-white border-b border-gray-200 px-4 py-3 lg:px-6 shadow-sm">
+        <header className="sticky top-0 z-30 bg-card border-b border-border px-4 py-3 lg:px-6 shadow-sm">
           <div className="w-full max-w-[1300px] mx-auto flex items-center justify-between">
             <div className="flex items-center space-x-4">
               {showSidebar && (
-                <button
+                <Button
+                  variant="ghost"
+                  size="icon"
                   onClick={() => setMobileMenuOpen(true)}
-                  className="lg:hidden p-2 rounded-md hover:bg-primary-grey transition-colors"
+                  className="lg:hidden"
                 >
-                  <Menu className="h-5 w-5 text-gray-600" />
-                </button>
+                  <Menu className="h-4 w-4" />
+                </Button>
               )}
-              <h1 className="text-lg font-semibold text-primary-black">{title}</h1>
+              <h1 className="text-lg font-semibold text-foreground">{title}</h1>
             </div>
             
             {/* Mobile User Menu */}
             <div className="lg:hidden flex items-center space-x-2">
-              <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center overflow-hidden">
-                <User className="h-4 w-4 text-gray-600" />
-              </div>
+              <Avatar className="h-8 w-8">
+                <AvatarFallback>
+                  <User className="h-4 w-4" />
+                </AvatarFallback>
+              </Avatar>
             </div>
           </div>
         </header>
@@ -261,26 +278,27 @@ export const Layout: React.FC<LayoutProps> = ({
 
       {/* Mobile Floating Navigation */}
       {showSidebar && (
-        <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-primary-white border-t border-gray-200 px-4 py-2 z-40 shadow-lg">
+        <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-card border-t border-border px-4 py-2 z-40 shadow-lg">
           <div className="flex justify-around items-center max-w-md mx-auto">
             {tabs.slice(0, 5).map((tab) => {
               const IconComponent = tab.icon;
               const isActive = activeTab === tab.id;
               return (
-                <button
+                <Button
                   key={tab.id}
+                  variant="ghost"
+                  size="sm"
+                  className={cn(
+                    "flex flex-col items-center justify-center h-auto py-2 px-3 min-w-0",
+                    isActive && "text-primary"
+                  )}
                   onClick={() => handleTabClick(tab.id)}
-                  className={`flex flex-col items-center justify-center p-3 rounded-xl transition-all duration-200 min-w-0 ${
-                    isActive
-                      ? 'bg-primary-orange text-primary-white shadow-md'
-                      : 'text-gray-500'
-                  }`}
                 >
-                  <IconComponent className={`h-5 w-5 mb-1 ${isActive ? 'text-primary-white' : 'text-gray-500'}`} />
-                  <span className={`text-xs font-medium truncate ${isActive ? 'text-primary-white' : 'text-gray-500'}`}>
+                  <IconComponent className="h-4 w-4 mb-1" />
+                  <span className="text-xs font-medium truncate">
                     {tab.label}
                   </span>
-                </button>
+                </Button>
               );
             })}
           </div>

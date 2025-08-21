@@ -1,6 +1,12 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { Eye, EyeOff, Mail, Lock, User, AlertCircle, CheckCircle, Phone, Building, Globe } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
 
 type AuthMode = 'login' | 'register' | 'forgot';
 
@@ -119,41 +125,40 @@ export const AuthForm: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-primary-white flex items-center justify-center px-4">
-      <div className="max-w-md w-full">
-        <div className="text-center mb-8">
+    <div className="min-h-screen bg-background flex items-center justify-center px-4">
+      <div className="max-w-md w-full space-y-6">
+        <div className="text-center">
           <div className="flex justify-center mb-4">
             <img src="/logo.svg" alt="Creative Acts" className="h-12" />
           </div>
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">
+          <h1 className="text-2xl font-bold text-foreground mb-2">
             {mode === 'login' && 'Welcome back'}
             {mode === 'register' && 'Create your account'}
             {mode === 'forgot' && 'Reset your password'}
           </h1>
-          <p className="text-gray-600">
+          <p className="text-muted-foreground">
             {mode === 'login' && 'Sign in to your account'}
             {mode === 'register' && 'Get started with Creative Acts'}
             {mode === 'forgot' && 'Enter your email to receive reset instructions'}
           </p>
         </div>
 
-        <div className="bg-primary-grey rounded-lg p-8">
-          <form onSubmit={handleSubmit} className="space-y-6">
+        <Card>
+          <CardContent className="pt-6">
+            <form onSubmit={handleSubmit} className="space-y-4">
             {mode === 'register' && (
               <div>
-                <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
-                  Full Name
-                </label>
+                <Label htmlFor="name">Full Name</Label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <User className="h-4 w-4 text-gray-400" />
+                    <User className="h-4 w-4 text-muted-foreground" />
                   </div>
-                  <input
+                  <Input
                     id="name"
                     type="text"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-orange focus:border-transparent"
+                    className="pl-10"
                     placeholder="John Doe"
                     required
                   />
@@ -163,19 +168,17 @@ export const AuthForm: React.FC = () => {
 
             {mode === 'register' && (
               <div>
-                <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
-                  Phone Number
-                </label>
+                <Label htmlFor="phone">Phone Number</Label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Phone className="h-4 w-4 text-gray-400" />
+                    <Phone className="h-4 w-4 text-muted-foreground" />
                   </div>
-                  <input
+                  <Input
                     id="phone"
                     type="tel"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
-                    className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-orange focus:border-transparent"
+                    className="pl-10"
                     placeholder="+1 (555) 123-4567"
                     required
                   />
@@ -185,19 +188,19 @@ export const AuthForm: React.FC = () => {
 
             {mode === 'register' && (
               <div>
-                <label htmlFor="company" className="block text-sm font-medium text-gray-700 mb-2">
-                  Company Name <span className="text-gray-400">(Optional)</span>
-                </label>
+                <Label htmlFor="company">
+                  Company Name <span className="text-muted-foreground">(Optional)</span>
+                </Label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Building className="h-4 w-4 text-gray-400" />
+                    <Building className="h-4 w-4 text-muted-foreground" />
                   </div>
-                  <input
+                  <Input
                     id="company"
                     type="text"
                     value={company}
                     onChange={(e) => setCompany(e.target.value)}
-                    className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-orange focus:border-transparent"
+                    className="pl-10"
                     placeholder="Your Company Inc."
                   />
                 </div>
@@ -206,45 +209,34 @@ export const AuthForm: React.FC = () => {
 
             {mode === 'register' && (
               <div>
-                <label htmlFor="country" className="block text-sm font-medium text-gray-700 mb-2">
-                  Country
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Globe className="h-4 w-4 text-gray-400" />
-                  </div>
-                  <select
-                    id="country"
-                    value={country}
-                    onChange={(e) => setCountry(e.target.value)}
-                    className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-orange focus:border-transparent appearance-none bg-primary-white"
-                    required
-                  >
-                    <option value="">Select your country</option>
+                <Label htmlFor="country">Country</Label>
+                <Select value={country} onValueChange={setCountry} required>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select your country" />
+                  </SelectTrigger>
+                  <SelectContent>
                     {countries.map((country) => (
-                      <option key={country.code} value={country.code}>
+                      <SelectItem key={country.code} value={country.code}>
                         {country.name}
-                      </option>
+                      </SelectItem>
                     ))}
-                  </select>
-                </div>
+                  </SelectContent>
+                </Select>
               </div>
             )}
 
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                Email Address
-              </label>
+              <Label htmlFor="email">Email Address</Label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Mail className="h-4 w-4 text-gray-400" />
+                  <Mail className="h-4 w-4 text-muted-foreground" />
                 </div>
-                <input
+                <Input
                   id="email"
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-orange focus:border-transparent"
+                  className="pl-10"
                   placeholder="you@example.com"
                   required
                 />
@@ -253,59 +245,60 @@ export const AuthForm: React.FC = () => {
 
             {mode !== 'forgot' && (
               <div>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
-                  Password
-                </label>
+                <Label htmlFor="password">Password</Label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Lock className="h-4 w-4 text-gray-400" />
+                    <Lock className="h-4 w-4 text-muted-foreground" />
                   </div>
-                  <input
+                  <Input
                     id="password"
                     type={showPassword ? 'text' : 'password'}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="block w-full pl-10 pr-10 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-orange focus:border-transparent"
+                    className="pl-10 pr-10"
                     placeholder="••••••••"
                     required
                   />
-                  <button
+                  <Button
                     type="button"
+                    variant="ghost"
+                    size="sm"
                     className="absolute inset-y-0 right-0 pr-3 flex items-center"
                     onClick={() => setShowPassword(!showPassword)}
                   >
                     {showPassword ? (
-                      <EyeOff className="h-4 w-4 text-gray-400" />
+                      <EyeOff className="h-4 w-4 text-muted-foreground" />
                     ) : (
-                      <Eye className="h-4 w-4 text-gray-400" />
+                      <Eye className="h-4 w-4 text-muted-foreground" />
                     )}
-                  </button>
+                  </Button>
                 </div>
               </div>
             )}
 
             {error && (
-              <div className="bg-red-50 border border-red-200 rounded-md p-3 flex items-center">
-                <AlertCircle className="h-4 w-4 text-red-500 mr-2 flex-shrink-0" />
-                <p className="text-sm text-red-600">{error}</p>
+              <div className="bg-destructive/15 border border-destructive/50 rounded-md p-3 flex items-center">
+                <AlertCircle className="h-4 w-4 text-destructive mr-2 flex-shrink-0" />
+                <p className="text-sm text-destructive">{error}</p>
               </div>
             )}
 
             {success && (
               <div className="bg-green-50 border border-green-200 rounded-md p-3 flex items-center">
-                <CheckCircle className="h-4 w-4 text-green-500 mr-2 flex-shrink-0" />
-                <p className="text-sm text-green-600">{success}</p>
+                <CheckCircle className="h-4 w-4 text-green-600 mr-2 flex-shrink-0" />
+                <p className="text-sm text-green-700">{success}</p>
               </div>
             )}
 
-            <button
+            <Button
               type="submit"
+              className="w-full"
+              size="lg"
               disabled={isLoading}
-              className="w-full flex justify-center py-3 px-6 border border-transparent rounded-xl shadow-lg text-sm font-medium text-primary-white bg-primary-black hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-orange disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
             >
               {isLoading ? (
                 <div className="flex items-center">
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary-white mr-2"></div>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary-foreground mr-2"></div>
                   Loading...
                 </div>
               ) : (
@@ -315,64 +308,70 @@ export const AuthForm: React.FC = () => {
                   {mode === 'forgot' && 'Send Reset Email'}
                 </>
               )}
-            </button>
+            </Button>
 
             <div className="text-center space-y-2">
               {mode === 'login' && (
                 <>
-                  <button
+                  <Button
                     type="button"
+                    variant="ghost"
+                    size="sm"
                     onClick={() => setMode('forgot')}
-                    className="text-sm text-gray-600 hover:text-black transition-colors"
                   >
                     Forgot your password?
-                  </button>
-                  <div className="text-sm text-gray-600">
+                  </Button>
+                  <div className="text-sm text-muted-foreground">
                     Don't have an account?{' '}
-                    <button
+                    <Button
                       type="button"
+                      variant="link"
+                      size="sm"
+                      className="p-0 h-auto"
                       onClick={() => setMode('register')}
-                      className="text-primary-black hover:underline"
                     >
                       Sign up
-                    </button>
+                    </Button>
                   </div>
                 </>
               )}
               
               {mode === 'register' && (
-                <div className="text-sm text-gray-600">
+                <div className="text-sm text-muted-foreground">
                   Already have an account?{' '}
-                  <button
+                  <Button
                     type="button"
+                    variant="link"
+                    size="sm"
+                    className="p-0 h-auto"
                     onClick={() => setMode('login')}
-                    className="text-primary-black hover:underline"
                   >
                     Sign in
-                  </button>
+                  </Button>
                 </div>
               )}
               
               {mode === 'forgot' && (
-                <button
+                <Button
                   type="button"
+                  variant="link"
+                  size="sm"
                   onClick={() => setMode('login')}
-                  className="text-sm text-primary-black hover:underline"
                 >
                   Back to sign in
-                </button>
+                </Button>
               )}
             </div>
 
             {/* Privacy Policy and Terms of Service */}
-            <div className="text-center pt-4 border-t border-gray-200">
-              <p className="text-xs text-gray-500">
+            <div className="text-center pt-4 border-t border-border">
+              <p className="text-xs text-muted-foreground">
                 By {mode === 'register' ? 'creating an account' : 'signing in'}, you agree to our{' '}
                 <a
                   href="/terms"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-primary-black hover:underline"
+                  className="text-foreground hover:underline"
                 >
                   Terms of Service
                 </a>
@@ -381,14 +380,15 @@ export const AuthForm: React.FC = () => {
                   href="/privacy"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-primary-black hover:underline"
+                  className="text-foreground hover:underline"
                 >
                   Privacy Policy
                 </a>
               </p>
             </div>
-          </form>
-        </div>
+            </form>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
