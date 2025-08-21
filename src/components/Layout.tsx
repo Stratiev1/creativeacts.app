@@ -77,12 +77,26 @@ export const Layout: React.FC<LayoutProps> = ({
                 <span className="font-semibold text-primary-black">Creative Acts</span>
               )}
             </div>
-            <button
-              onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-              className={`p-1 rounded-md hover:bg-primary-grey transition-colors ${sidebarCollapsed ? 'hidden' : ''}`}
-            >
-              <Menu className="h-5 w-5 text-gray-600" />
-            </button>
+            {!sidebarCollapsed && (
+              <button
+                onClick={() => setSidebarCollapsed(true)}
+                className="p-1 rounded-md hover:bg-primary-grey transition-colors"
+              >
+                <X className="h-5 w-5 text-gray-600" />
+              </button>
+            )}
+          </div>
+
+          {/* Expand button when collapsed */}
+          {sidebarCollapsed && (
+            <div className="p-2 border-b border-gray-200">
+              <button
+                onClick={() => setSidebarCollapsed(false)}
+                className="w-full p-2 rounded-md hover:bg-primary-grey transition-colors flex items-center justify-center"
+              >
+                <Menu className="h-5 w-5 text-gray-600" />
+              </button>
+            </div>
           </div>
 
           {/* Navigation */}
