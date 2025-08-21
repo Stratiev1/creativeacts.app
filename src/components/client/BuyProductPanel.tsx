@@ -6,6 +6,15 @@ import { useData } from '../../contexts/DataContext';
 import { useAuth } from '../../contexts/AuthContext';
 import { DesignEnhancer } from './DesignEnhancer';
 import { useDesignEnhancer } from '../../hooks/useDesignEnhancer';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Switch } from "@/components/ui/switch";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 export const BuyProductPanel: React.FC = () => {
   const [selectedProduct, setSelectedProduct] = useState<string | null>(null);
@@ -108,52 +117,53 @@ export const BuyProductPanel: React.FC = () => {
   return (
     <div className="space-y-6">
       {error && (
-        <div className="bg-red-50 border border-red-200 rounded-md p-4 flex items-center">
-          <AlertCircle className="h-5 w-5 text-red-500 mr-3 flex-shrink-0" />
-          <div>
-            <h3 className="text-sm font-medium text-red-800">Payment Error</h3>
-            <p className="text-sm text-red-700 mt-1">{error}</p>
-          </div>
-        </div>
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>
+            <strong>Payment Error:</strong> {error}
+          </AlertDescription>
+        </Alert>
       )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {products.map((product) => (
-          <div 
+          <Card 
             key={product.id} 
-            className="bg-primary-grey rounded-xl p-6 hover:shadow-lg transition-all duration-200 border border-gray-200"
+            className="hover:shadow-lg transition-all duration-200"
           >
-            <div className="mb-4">
+            <CardHeader>
               <div className="flex items-center justify-between mb-3">
-                <h3 className="text-lg font-semibold text-primary-black">{product.name}</h3>
-                <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${getProductTypeColor(product.mode)}`}>
+                <CardTitle className="text-lg">{product.name}</CardTitle>
+                <Badge variant={product.mode === 'subscription' ? 'default' : 'secondary'}>
                   {getProductTypeLabel(product.mode)}
-                </span>
+                </Badge>
               </div>
               
-              <p className="text-gray-600 text-sm mb-4 min-h-[2.5rem]">
+              <CardDescription className="min-h-[2.5rem]">
                 {product.description}
-              </p>
+              </CardDescription>
               
               <div className="flex items-baseline justify-between mb-4">
-                <span className="text-2xl font-bold text-primary-black">
+                <span className="text-2xl font-bold text-foreground">
                   {formatPrice(product.price, product.currency)}
                 </span>
                 {product.mode === 'subscription' && (
-                  <span className="text-sm text-gray-500">/month</span>
+                  <span className="text-sm text-muted-foreground">/month</span>
                 )}
               </div>
-            </div>
+            </CardHeader>
 
-            <button
+            <CardContent>
+            <Button
               onClick={() => handleBuyClick(product.id)}
               disabled={isLoading && selectedProduct === product.id}
-              className="w-full py-3 px-6 bg-primary-black text-primary-white rounded-xl shadow-lg hover:bg-opacity-90 transition-all duration-200 font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+              className="w-full"
+              size="lg"
               onMouseDown={() => setSelectedProduct(product.id)}
             >
               {isLoading && selectedProduct === product.id ? (
                 <>
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin text-primary-white" />
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
                   Processing...
                 </>
               ) : (
@@ -162,91 +172,86 @@ export const BuyProductPanel: React.FC = () => {
                   {product.mode === 'subscription' ? 'Subscribe Now' : 'Create Request & Buy'}
                 </>
               )}
-            </button>
-          </div>
+            </Button>
+            </CardContent>
+          </Card>
         ))}
       </div>
 
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
-        <h3 className="text-lg font-semibold text-primary-black mb-2">Secure Payment</h3>
-        <p className="text-blue-800 text-sm">
+      <Alert>
+        <ShoppingBag className="h-4 w-4" />
+        <AlertDescription>
+          <strong>Secure Payment:</strong>{' '}
           All payments are processed securely through Stripe. Your payment information is encrypted and never stored on our servers.
-        </p>
-      </div>
+        </AlertDescription>
+      </Alert>
 
       {/* Request Form Modal */}
       {showRequestForm && currentProduct && (
-        <div className="fixed inset-0 bg-primary-black bg-opacity-50 flex items-center justify-center p-4 z-50" onClick={() => setShowRequestForm(false)}>
-          <div className="bg-primary-white rounded-xl p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto shadow-2xl" onClick={(e) => e.stopPropagation()}>
-            <div className="flex justify-between items-center mb-6">
-              <div>
-                <h3 className="text-lg font-bold text-primary-black">Create Request for {currentProduct.name}</h3>
-                <p className="text-sm text-gray-600 mt-1">Tell us about your requirements before proceeding to payment</p>
-              </div>
-              <button
-                onClick={() => setShowRequestForm(false)}
-                className="text-gray-400 hover:text-primary-black"
-              >
-                <X className="h-6 w-6" />
-              </button>
-            </div>
+        <Dialog open={showRequestForm} onOpenChange={setShowRequestForm}>
+          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>Create Request for {currentProduct.name}</DialogTitle>
+              <DialogDescription>
+                Tell us about your requirements before proceeding to payment
+              </DialogDescription>
+            </DialogHeader>
 
             <form onSubmit={(e) => { e.preventDefault(); handlePurchase(); }} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <Label htmlFor="title">
                   Title *
-                </label>
-                <input
-                  type="text"
+                </Label>
+                <Input
+                  id="title"
                   value={formData.title}
                   onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-orange focus:border-transparent"
                   placeholder="e.g., Logo Design for Tech Startup"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <Label htmlFor="description">
                   Description *
-                </label>
-                <textarea
+                </Label>
+                <Textarea
+                  id="description"
                   value={formData.description}
                   onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
                   rows={4}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-orange focus:border-transparent"
                   placeholder="Describe your project requirements..."
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <Label htmlFor="notes">
                   Additional Notes
-                </label>
-                <textarea
+                </Label>
+                <Textarea
+                  id="notes"
                   value={formData.notes}
                   onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value }))}
                   rows={2}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-orange focus:border-transparent"
                   placeholder="Any additional notes or preferences..."
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <Label>
                   Upload Files
-                </label>
-                <div className="border-2 border-dashed border-gray-300 rounded-md p-4">
+                </Label>
+                <div className="border-2 border-dashed border-border rounded-md p-4">
                   <label
                     htmlFor="file-upload"
                     className="cursor-pointer flex flex-col items-center"
                   >
-                    <Upload className="h-8 w-8 text-gray-400 mb-2" />
-                    <span className="text-sm text-gray-600">
+                    <Upload className="h-8 w-8 text-muted-foreground mb-2" />
+                    <span className="text-sm text-muted-foreground">
                       Click to upload files or drag and drop
                     </span>
-                    <span className="text-xs text-gray-400 mt-1">
+                    <span className="text-xs text-muted-foreground mt-1">
                       PDF, JPG, PNG up to 10MB each
                     </span>
                   </label>
@@ -255,15 +260,16 @@ export const BuyProductPanel: React.FC = () => {
                 {formData.files.length > 0 && (
                   <div className="mt-4 space-y-2">
                     {formData.files.map((file, index) => (
-                      <div key={index} className="flex items-center justify-between bg-gray-50 p-2 rounded">
-                        <span className="text-sm text-gray-700">{file}</span>
-                        <button
+                      <div key={index} className="flex items-center justify-between bg-muted p-2 rounded">
+                        <span className="text-sm text-foreground">{file}</span>
+                        <Button
+                          variant="ghost"
+                          size="sm"
                           type="button"
                           onClick={() => removeFile(index)}
-                          className="text-red-500 hover:text-red-700"
                         >
                           <X className="h-4 w-4" />
-                        </button>
+                        </Button>
                       </div>
                     ))}
                   </div>
@@ -272,27 +278,18 @@ export const BuyProductPanel: React.FC = () => {
 
               {/* Design Enhancer Toggle */}
               <div className="flex items-center justify-between">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">
+                <div className="space-y-0.5">
+                  <Label>
                     Design Request Enhancer
-                  </label>
-                  <p className="text-xs text-gray-500 mt-1">
+                  </Label>
+                  <p className="text-xs text-muted-foreground">
                     Help us understand your design preferences (optional)
                   </p>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => setShowEnhancer(!showEnhancer)}
-                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-all duration-200 ${
-                    showEnhancer ? 'bg-primary-orange' : 'bg-gray-200'
-                  }`}
-                >
-                  <span
-                    className={`inline-block h-4 w-4 transform rounded-full bg-primary-white transition-transform ${
-                      showEnhancer ? 'translate-x-6' : 'translate-x-1'
-                    }`}
-                  />
-                </button>
+                <Switch
+                  checked={showEnhancer}
+                  onCheckedChange={setShowEnhancer}
+                />
               </div>
 
               {/* Design Enhancer */}
@@ -305,29 +302,27 @@ export const BuyProductPanel: React.FC = () => {
 
               <div className="flex justify-between items-center pt-4 border-t border-gray-200">
                 <div className="text-left">
-                  <p className="text-sm text-gray-600">Total Amount</p>
-                  <p className="text-2xl font-bold text-primary-black">
+                  <p className="text-sm text-muted-foreground">Total Amount</p>
+                  <p className="text-2xl font-bold text-foreground">
                     {formatPrice(currentProduct.price, currentProduct.currency)}
                   </p>
                 </div>
                 
                 <div className="flex space-x-3">
-                  <button
-                    type="button"
+                  <Button
+                    variant="outline"
                     onClick={() => {
                       setShowRequestForm(false);
                       setShowEnhancer(false);
                       setEnhancerSelections({});
                       setCurrentProduct(null);
                     }}
-                    className="px-4 py-2 border border-gray-300 text-gray-700 rounded-xl hover:bg-primary-grey transition-colors"
                   >
                     Cancel
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     type="submit"
                     disabled={isLoading}
-                    className="px-6 py-3 bg-primary-black text-primary-white rounded-xl shadow-lg hover:bg-opacity-90 transition-all duration-200 font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
                   >
                     {isLoading ? (
                       <>
@@ -340,12 +335,12 @@ export const BuyProductPanel: React.FC = () => {
                         <ArrowRight className="h-4 w-4 ml-2" />
                       </>
                     )}
-                  </button>
+                  </Button>
                 </div>
               </div>
             </form>
-          </div>
-        </div>
+          </DialogContent>
+        </Dialog>
       )}
     </div>
   );

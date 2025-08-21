@@ -3,6 +3,10 @@ import { CreditCard, Calendar, DollarSign, AlertCircle, Loader2, CheckCircle, XC
 import { useSubscription } from '../../hooks/useSubscription';
 import { products } from '../../stripe-config';
 import { useStripe } from '../../hooks/useStripe';
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 export const SubscriptionsPanel: React.FC = () => {
   const { subscription, isLoading, error, hasActiveSubscription, isSubscriptionCanceled, getSubscriptionEndDate } = useSubscription();
@@ -46,9 +50,9 @@ export const SubscriptionsPanel: React.FC = () => {
   if (isLoading) {
     return (
       <div className="space-y-6">
-        <h2 className="text-2xl font-bold text-black">Subscriptions</h2>
+        <h2 className="text-2xl font-bold text-foreground">Subscriptions</h2>
         <div className="flex items-center justify-center py-12">
-          <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
+          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
         </div>
       </div>
     );
@@ -57,14 +61,13 @@ export const SubscriptionsPanel: React.FC = () => {
   if (error) {
     return (
       <div className="space-y-6">
-        <h2 className="text-2xl font-bold text-black">Subscriptions</h2>
-        <div className="bg-red-50 border border-red-200 rounded-md p-4 flex items-center">
-          <AlertCircle className="h-5 w-5 text-red-500 mr-3 flex-shrink-0" />
-          <div>
-            <h3 className="text-sm font-medium text-red-800">Error Loading Subscription</h3>
-            <p className="text-sm text-red-700 mt-1">{error}</p>
-          </div>
-        </div>
+        <h2 className="text-2xl font-bold text-foreground">Subscriptions</h2>
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>
+            <strong>Error Loading Subscription:</strong> {error}
+          </AlertDescription>
+        </Alert>
       </div>
     );
   }
@@ -73,30 +76,31 @@ export const SubscriptionsPanel: React.FC = () => {
     <div className="space-y-6">
       {/* Current Subscription */}
       {subscription && subscription.subscription_status !== 'not_started' ? (
-        <div className="bg-primary-grey rounded-xl p-6">
-          <div className="flex items-center justify-between mb-4">
+        <Card>
+          <CardHeader>
             <div className="flex items-center space-x-3">
               {getStatusIcon(subscription.subscription_status)}
               <div>
-                <h3 className="text-lg font-semibold text-primary-black">
+                <CardTitle className="text-lg">
                   {subscription.product_name || 'Current Subscription'}
-                </h3>
-                <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full border capitalize ${getStatusColor(subscription.subscription_status)}`}>
+                </CardTitle>
+                <Badge variant={subscription.subscription_status === 'active' || subscription.subscription_status === 'trialing' ? 'default' : 'destructive'} className="capitalize">
                   {subscription.subscription_status.replace('_', ' ')}
-                </span>
+                </Badge>
               </div>
             </div>
-          </div>
+          </CardHeader>
 
+          <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
             {subscription.current_period_end && (
               <div className="flex items-center space-x-2">
-                <Calendar className="h-4 w-4 text-gray-400" />
+                <Calendar className="h-4 w-4 text-muted-foreground" />
                 <div>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-muted-foreground">
                     {subscription.cancel_at_period_end ? 'Expires' : 'Next billing'}
                   </p>
-                  <p className="font-medium text-gray-900">
+                  <p className="font-medium text-foreground">
                     {new Date(subscription.current_period_end * 1000).toLocaleDateString()}
                   </p>
                 </div>
@@ -105,10 +109,10 @@ export const SubscriptionsPanel: React.FC = () => {
 
             {subscription.payment_method_last4 && (
               <div className="flex items-center space-x-2">
-                <CreditCard className="h-4 w-4 text-gray-400" />
+                <CreditCard className="h-4 w-4 text-muted-foreground" />
                 <div>
-                  <p className="text-sm text-gray-600">Payment method</p>
-                  <p className="font-medium text-gray-900">
+                  <p className="text-sm text-muted-foreground">Payment method</p>
+                  <p className="font-medium text-foreground">
                     {subscription.payment_method_brand?.toUpperCase()} •••• {subscription.payment_method_last4}
                   </p>
                 </div>
@@ -117,61 +121,64 @@ export const SubscriptionsPanel: React.FC = () => {
           </div>
 
           {subscription.cancel_at_period_end && (
-            <div className="bg-yellow-50 border border-yellow-200 rounded-md p-3 mb-4">
-              <p className="text-sm text-yellow-800">
+            <Alert className="mb-4">
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription>
                 Your subscription will end on {getSubscriptionEndDate()?.toLocaleDateString()}. 
                 You'll continue to have access until then.
-              </p>
-            </div>
+              </AlertDescription>
+            </Alert>
           )}
-        </div>
+          </CardContent>
+        </Card>
       ) : (
-        <div className="bg-primary-grey rounded-xl p-8 text-center">
-          <CreditCard className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-gray-900 mb-2">No Active Subscription</h3>
-          <p className="text-gray-500 mb-4">Choose a subscription plan to get started</p>
-        </div>
+        <Card>
+          <CardContent className="pt-6 text-center">
+            <CreditCard className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+            <h3 className="text-lg font-medium text-foreground mb-2">No Active Subscription</h3>
+            <p className="text-muted-foreground mb-4">Choose a subscription plan to get started</p>
+          </CardContent>
+        </Card>
       )}
 
       {/* Available Plans */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-primary-black">Available Plans</h3>
+        <h3 className="text-lg font-semibold text-foreground">Available Plans</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {subscriptionProducts.map((product) => {
             const isCurrentPlan = subscription?.price_id === product.priceId;
             
             return (
-              <div
+              <Card
                 key={product.id}
-                className={`border-2 rounded-xl p-6 transition-all duration-200 ${
+                className={`transition-all duration-200 ${
                   isCurrentPlan
-                    ? 'border-primary-orange bg-primary-grey shadow-lg'
-                    : 'border-gray-200 bg-primary-white hover:border-primary-orange hover:shadow-md'
+                    ? 'ring-2 ring-primary shadow-lg'
+                    : 'hover:shadow-md'
                 }`}
               >
-                <div className="text-center mb-6">
-                  <h4 className="text-xl font-bold text-primary-black mb-2">{product.name}</h4>
+                <CardHeader className="text-center">
+                  <CardTitle className="text-xl">{product.name}</CardTitle>
                   <div className="mb-4">
-                    <span className="text-3xl font-bold text-primary-black">
+                    <span className="text-3xl font-bold text-foreground">
                       {formatPrice(product.price, product.currency)}
                     </span>
-                    <span className="text-gray-600">/month</span>
+                    <span className="text-muted-foreground">/month</span>
                   </div>
-                  <p className="text-gray-600 text-sm">{product.description}</p>
-                </div>
+                  <CardDescription>{product.description}</CardDescription>
+                </CardHeader>
 
-                <button
+                <CardContent>
+                <Button
                   onClick={() => purchaseProduct(product)}
                   disabled={isCurrentPlan || isCheckoutLoading}
-                  className={`w-full py-3 px-6 rounded-xl font-medium transition-all duration-200 flex items-center justify-center shadow-lg ${
-                    isCurrentPlan
-                      ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
-                      : 'bg-primary-black text-primary-white hover:bg-opacity-90 disabled:opacity-50 disabled:cursor-not-allowed'
-                  }`}
+                  className="w-full"
+                  variant={isCurrentPlan ? "secondary" : "default"}
+                  size="lg"
                 >
                   {isCheckoutLoading ? (
                     <>
-                      <Loader2 className="h-4 w-4 mr-2 animate-spin text-primary-white" />
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
                       Processing...
                     </>
                   ) : isCurrentPlan ? (
@@ -179,8 +186,9 @@ export const SubscriptionsPanel: React.FC = () => {
                   ) : (
                     'Subscribe'
                   )}
-                </button>
-              </div>
+                </Button>
+                </CardContent>
+              </Card>
             );
           })}
         </div>

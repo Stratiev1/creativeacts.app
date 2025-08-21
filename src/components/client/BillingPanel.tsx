@@ -1,5 +1,8 @@
 import React from 'react';
 import { Receipt, Download, Eye, Calendar, DollarSign } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 // Mock billing data
 const billingHistory = [
@@ -52,58 +55,69 @@ export const BillingPanel: React.FC = () => {
     <div className="space-y-6">
       {/* Summary Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        <div className="bg-gray-50 rounded-lg p-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-600">Total Spent</p>
-              <p className="text-xl sm:text-2xl font-bold text-black">${totalSpent.toFixed(2)}</p>
+        <Card>
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground">Total Spent</p>
+                <p className="text-xl sm:text-2xl font-bold text-foreground">${totalSpent.toFixed(2)}</p>
+              </div>
+              <DollarSign className="h-8 w-8 text-muted-foreground" />
             </div>
-            <DollarSign className="h-8 w-8 text-gray-400" />
-          </div>
-        </div>
+          </CardContent>
+        </Card>
 
-        <div className="bg-gray-50 rounded-lg p-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-600">Total Invoices</p>
-              <p className="text-xl sm:text-2xl font-bold text-black">{billingHistory.length}</p>
+        <Card>
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground">Total Invoices</p>
+                <p className="text-xl sm:text-2xl font-bold text-foreground">{billingHistory.length}</p>
+              </div>
+              <Receipt className="h-8 w-8 text-muted-foreground" />
             </div>
-            <Receipt className="h-8 w-8 text-gray-400" />
-          </div>
-        </div>
+          </CardContent>
+        </Card>
 
-        <div className="bg-gray-50 rounded-lg p-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-600">Last Payment</p>
-              <p className="text-xl sm:text-2xl font-bold text-black">
+        <Card>
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground">Last Payment</p>
+                <p className="text-xl sm:text-2xl font-bold text-foreground">
                 {new Date(billingHistory[0]?.date).toLocaleDateString()}
               </p>
+              </div>
+              <Calendar className="h-8 w-8 text-muted-foreground" />
             </div>
-            <Calendar className="h-8 w-8 text-gray-400" />
-          </div>
-        </div>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Billing History */}
-      <div className="bg-gray-50 rounded-lg p-6">
-        <h3 className="text-lg font-semibold text-black mb-4">Billing History</h3>
+      <Card>
+        <CardHeader>
+          <CardTitle>Billing History</CardTitle>
+        </CardHeader>
+        <CardContent>
         
         {billingHistory.length === 0 ? (
           <div className="text-center py-8">
-            <Receipt className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <p className="text-gray-500">No billing history yet</p>
+            <Receipt className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+            <p className="text-muted-foreground">No billing history yet</p>
           </div>
         ) : (
           <div className="space-y-3">
             {billingHistory.map((invoice) => (
-              <div key={invoice.id} className="bg-white rounded-lg p-4 flex items-center justify-between">
+              <Card key={invoice.id}>
+                <CardContent className="pt-6">
+                <div className="flex items-center justify-between">
                 <div className="flex-1">
                   <div className="flex items-center space-x-3">
-                    <Receipt className="h-5 w-5 text-gray-400" />
+                    <Receipt className="h-5 w-5 text-muted-foreground" />
                     <div>
-                      <h4 className="font-medium text-black">{invoice.description}</h4>
-                      <p className="text-sm text-gray-500">
+                      <h4 className="font-medium text-foreground">{invoice.description}</h4>
+                      <p className="text-sm text-muted-foreground">
                         {new Date(invoice.date).toLocaleDateString()} • Invoice #{invoice.id}
                       </p>
                     </div>
@@ -112,60 +126,67 @@ export const BillingPanel: React.FC = () => {
 
                 <div className="flex items-center space-x-4">
                   <div className="text-right">
-                    <p className="font-semibold text-black">${invoice.amount.toFixed(2)}</p>
-                    <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${
-                      invoice.status === 'paid'
-                        ? 'bg-green-100 text-green-800'
-                        : 'bg-yellow-100 text-yellow-800'
-                    }`}>
+                    <p className="font-semibold text-foreground">${invoice.amount.toFixed(2)}</p>
+                    <Badge variant={invoice.status === 'paid' ? 'default' : 'secondary'}>
                       {invoice.status}
-                    </span>
+                    </Badge>
                   </div>
 
                   <div className="flex space-x-2">
-                    <button
+                    <Button
+                      variant="ghost"
+                      size="icon"
                       onClick={() => handleViewInvoice(invoice.id)}
-                      className="p-2 text-gray-600 hover:text-black hover:bg-gray-100 rounded-md transition-colors"
                       title="View Invoice"
                     >
                       <Eye className="h-4 w-4" />
-                    </button>
-                    <button
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
                       onClick={() => handleDownloadInvoice(invoice.id)}
-                      className="p-2 text-gray-600 hover:text-black hover:bg-gray-100 rounded-md transition-colors"
                       title="Download Invoice"
                     >
                       <Download className="h-4 w-4" />
-                    </button>
+                    </Button>
                   </div>
                 </div>
-              </div>
+                </div>
+                </CardContent>
+              </Card>
             ))}
           </div>
         )}
-      </div>
+        </CardContent>
+      </Card>
 
       {/* Payment Method */}
-      <div className="bg-gray-50 rounded-lg p-6">
-        <div className="flex justify-between items-center mb-4">
-          <h3 className="text-lg font-semibold text-black">Payment Method</h3>
-          <button className="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors">
+      <Card>
+        <CardHeader>
+          <div className="flex justify-between items-center">
+            <CardTitle>Payment Method</CardTitle>
+            <Button variant="outline">
             Update
-          </button>
-        </div>
+            </Button>
+          </div>
+        </CardHeader>
         
-        <div className="bg-white rounded-lg p-4">
+        <CardContent>
+        <Card>
+          <CardContent className="pt-6">
           <div className="flex items-center space-x-3">
             <div className="w-8 h-6 bg-gradient-to-r from-blue-600 to-blue-800 rounded text-white text-xs flex items-center justify-center font-bold">
               VISA
             </div>
             <div>
-              <p className="font-medium text-black">•••• •••• •••• 4242</p>
-              <p className="text-sm text-gray-500">Expires 12/25</p>
+              <p className="font-medium text-foreground">•••• •••• •••• 4242</p>
+              <p className="text-sm text-muted-foreground">Expires 12/25</p>
             </div>
           </div>
-        </div>
-      </div>
+          </CardContent>
+        </Card>
+        </CardContent>
+      </Card>
     </div>
   );
 };
