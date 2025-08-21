@@ -240,7 +240,7 @@ export const AdminChatPanel: React.FC = () => {
 
       
       {/* Floating Input Area */}
-      <div className="absolute bottom-4 left-4 right-4 z-10">
+      <div className="absolute bottom-20 lg:bottom-4 left-4 right-4 z-10">
         <div className="w-full max-w-4xl mx-auto">
           <div className="bg-white/90 backdrop-blur-sm border border-gray-200/50 rounded-2xl shadow-lg p-4">
             <form onSubmit={handleSendMessage} className="flex items-center space-x-3">
