@@ -71,15 +71,15 @@ export const Layout: React.FC<LayoutProps> = ({
         }`}>
           {/* Sidebar Header */}
           <div className="flex items-center justify-between p-4 border-b border-gray-200">
-            {!sidebarCollapsed && (
-              <div className="flex items-center space-x-2">
-                <img src="/logo.svg" alt="Creative Acts" className="h-8" />
+            <div className={`flex items-center ${sidebarCollapsed ? 'justify-center w-full' : 'space-x-2'}`}>
+              <img src="/logo.svg" alt="Creative Acts" className="h-8 flex-shrink-0" />
+              {!sidebarCollapsed && (
                 <span className="font-semibold text-primary-black">Creative Acts</span>
-              </div>
-            )}
+              )}
+            </div>
             <button
               onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-              className="p-1 rounded-md hover:bg-primary-grey transition-colors"
+              className={`p-1 rounded-md hover:bg-primary-grey transition-colors ${sidebarCollapsed ? 'hidden' : ''}`}
             >
               <Menu className="h-5 w-5 text-gray-600" />
             </button>
