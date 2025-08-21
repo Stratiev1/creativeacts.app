@@ -52,7 +52,7 @@ export const ChatPanel: React.FC = () => {
   };
 
   return (
-    <div className="h-full flex flex-col bg-gray-50">
+    <div className="h-[calc(100vh-140px)] flex flex-col bg-gray-50">
       {/* Chat Messages */}
       <div className="flex-1 overflow-y-auto pb-24">
         <div className="w-full max-w-4xl mx-auto px-4 py-6 space-y-6">

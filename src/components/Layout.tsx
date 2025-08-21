@@ -269,8 +269,8 @@ export const Layout: React.FC<LayoutProps> = ({
         </header>
 
         {/* Content Area */}
-        <main className="flex-1 overflow-auto pb-20 lg:pb-0">
-          <div className="w-full max-w-[1300px] mx-auto px-4 py-6 lg:px-6">
+        <main className="flex-1 overflow-auto pb-20 lg:pb-0 h-full">
+          <div className="w-full h-full max-w-[1300px] mx-auto px-4 py-6 lg:px-6">
             {children}
           </div>
         </main>

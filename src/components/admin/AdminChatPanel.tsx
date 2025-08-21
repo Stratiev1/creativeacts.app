@@ -114,7 +114,7 @@ export const AdminChatPanel: React.FC = () => {
   }
 
   return (
-    <div className="h-full flex flex-col bg-gray-50">
+    <div className="h-[calc(100vh-140px)] flex flex-col bg-gray-50">
       {/* Chat Header */}
       <div className="flex items-center p-4 border-b border-gray-200 bg-white">
         <button
