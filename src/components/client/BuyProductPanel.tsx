@@ -24,7 +24,7 @@ export const BuyProductPanel: React.FC = () => {
     files: [] as string[]
   });
 
-  const handleBuyClick = (productId: string) => {
+  const handleBuyClick = async (productId: string) => {
     const product = products.find(p => p.id === productId);
     if (!product) return;
 
