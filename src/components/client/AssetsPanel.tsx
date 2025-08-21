@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useSubscription } from '../hooks/useSubscription';
-import { LogOut, User, Menu, X, MessageSquare, FileText, Users, FolderOpen, CreditCard, Settings, ShoppingBag, Receipt, Home } from 'lucide-react';
+import { LogOut, User, Menu, X, MessageSquare, FileText, Users, FolderOpen, CreditCard, Settings, ShoppingBag, Receipt } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 
@@ -76,14 +75,11 @@ export const Layout: React.FC<LayoutProps> = ({
           sidebarCollapsed ? "w-16" : "w-64"
         )}>
           {/* Sidebar Header */}
-          <div className="p-6 border-b">
+          <div className="p-6 border-b border-border">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
-              <div className={cn(
-                "flex items-center",
-                sidebarCollapsed ? "justify-center" : "space-x-3"
-              )}>
-                <img src="/logo.svg" alt="Creative Acts" className="h-8 w-8 flex-shrink-0" />
+              <div className="flex items-center space-x-2">
+                <img src="/logo.svg" alt="Creative Acts" className="h-8 flex-shrink-0" />
                 {!sidebarCollapsed && (
                   <span className="font-semibold text-foreground">Creative Acts</span>
                 )}
@@ -98,8 +94,7 @@ export const Layout: React.FC<LayoutProps> = ({
                 </Button>
               )}
             </div>
-            </div>
-          </div>
+          )}
 
           {/* Navigation */}
           <nav className="flex-1 p-4">
@@ -146,36 +141,36 @@ export const Layout: React.FC<LayoutProps> = ({
                   </p>
                   <p className="text-xs text-muted-foreground truncate">
                     {getSubscriptionDisplay()}
-                  </p>
-                </div>
+                {!sidebarCollapsed && (
+                  <span className="font-semibold text-foreground">Creative Acts</span>
+                )}
+              </div>
+              {!sidebarCollapsed && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setSidebarCollapsed(true)}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
               )}
             </div>
-            {!sidebarCollapsed && (
+          </div>
+
+          {/* Expand button when collapsed */}
+          {sidebarCollapsed && (
+            <div className="p-2 border-b border-border">
               <Button
                 variant="ghost"
                 size="sm"
                 className="w-full justify-start"
                 onClick={signOut}
-              >
-                <LogOut className="h-4 w-4 mr-2" />
-                Sign out
-              </Button>
-            )}
-          </div>
-
-          {/* Expand button when collapsed */}
-          {sidebarCollapsed && (
-            <div className="p-2 border-t border-border">
-              <Button
-                variant="ghost"
-                size="sm"
                 onClick={() => setSidebarCollapsed(false)}
                 className="w-full"
-              >
+                <LogOut className="h-4 w-4 mr-2" />
                 <Menu className="h-4 w-4" />
               </Button>
-            </div>
-          )}
+          </div>
         </div>
       )}
 
@@ -184,7 +179,7 @@ export const Layout: React.FC<LayoutProps> = ({
         <div className="lg:hidden fixed inset-0 z-50 bg-background/80 backdrop-blur-sm">
           <div className="fixed inset-y-0 left-0 w-64 bg-card border-r shadow-lg">
             {/* Mobile Sidebar Header */}
-            <div className="p-6 border-b">
+            <div className="p-6 border-b border-border">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
                   <img src="/logo.svg" alt="Creative Acts" className="h-8 w-8 flex-shrink-0" />
@@ -257,7 +252,7 @@ export const Layout: React.FC<LayoutProps> = ({
       {/* Main Content */}
       <div className="flex-1 flex flex-col min-w-0">
         {/* Top Header */}
-        <header className="sticky top-0 z-30 bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/60 border-b px-4 py-3 lg:px-6">
+        <header className="sticky top-0 z-30 bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/60 border-b border-border px-4 py-3 lg:px-6">
           <div className="w-full max-w-[1400px] mx-auto flex items-center justify-between">
             <div className="flex items-center space-x-4">
               {showSidebar && (
@@ -267,7 +262,7 @@ export const Layout: React.FC<LayoutProps> = ({
                   onClick={() => setMobileMenuOpen(true)}
                   className="lg:hidden"
                 >
-                  <Menu className="h-4 w-4" />
+                  <img src="/logo.svg" alt="Menu" className="h-6 w-6" />
                 </Button>
               )}
               <h1 className="text-xl font-semibold text-foreground">{title}</h1>
@@ -294,7 +289,7 @@ export const Layout: React.FC<LayoutProps> = ({
 
       {/* Mobile Bottom Navigation */}
       {showSidebar && (
-        <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/60 border-t px-2 py-2 z-40">
+        <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/60 border-t border-border px-2 py-2 z-40">
           <div className="flex justify-around items-center max-w-md mx-auto">
             {tabs.slice(0, 5).map((tab) => {
               const IconComponent = tab.icon;
