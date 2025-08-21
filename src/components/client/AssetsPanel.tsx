@@ -1,239 +1,324 @@
 import React, { useState } from 'react';
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuth } from '../contexts/AuthContext';
+import { useSubscription } from '../hooks/useSubscription';
+import { LogOut, User, Menu, X, MessageSquare, FileText, Users, FolderOpen, CreditCard, Settings, ShoppingBag, Receipt, Home } from 'lucide-react';
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { 
-  FolderOpen, 
-  Upload, 
-  Download, 
-  Search, 
-  Filter, 
-  Grid3X3, 
-  List, 
-  MoreVertical,
-  File,
-  Image,
-  FileText,
-  Video
-} from 'lucide-react';
+import { cn } from "@/lib/utils";
 
-export const AssetsPanel: React.FC = () => {
-  const { user } = useAuth();
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-  const [selectedCategory, setSelectedCategory] = useState<string>('all');
+interface LayoutProps {
+  children: React.ReactNode;
+  title: string;
+  activeTab?: string;
+  onTabChange?: (tab: string) => void;
+  showSidebar?: boolean;
+}
 
-  // Mock data for assets
-  const assets = [
-    {
-      id: '1',
-      name: 'Brand Guidelines.pdf',
-      type: 'document',
-      size: '2.4 MB',
-      uploadedAt: '2024-01-15',
-      category: 'branding'
-    },
-    {
-      id: '2',
-      name: 'Logo Variations.zip',
-      type: 'archive',
-      size: '15.2 MB',
-      uploadedAt: '2024-01-14',
-      category: 'branding'
-    },
-    {
-      id: '3',
-      name: 'Website Mockup.fig',
-      type: 'design',
-      size: '8.7 MB',
-      uploadedAt: '2024-01-12',
-      category: 'design'
-    },
-    {
-      id: '4',
-      name: 'Product Photos.zip',
-      type: 'images',
-      size: '45.1 MB',
-      uploadedAt: '2024-01-10',
-      category: 'photography'
-    }
+export const Layout: React.FC<LayoutProps> = ({ 
+  children, 
+  title, 
+  activeTab, 
+  onTabChange,
+  showSidebar = true 
+}) => {
+  const { user, signOut } = useAuth();
+  const { subscription } = useSubscription();
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const isAdmin = user?.user_metadata?.role === 'admin';
+
+  const adminTabs = [
+    { id: 'clients', label: 'Clients', icon: Users },
+    { id: 'requests', label: 'Requests', icon: FileText },
+    { id: 'chat', label: 'Chat', icon: MessageSquare }
   ];
 
-  const categories = [
-    { value: 'all', label: 'All Assets' },
-    { value: 'branding', label: 'Branding' },
-    { value: 'design', label: 'Design' },
-    { value: 'photography', label: 'Photography' },
-    { value: 'documents', label: 'Documents' }
+  const clientTabs = [
+    { id: 'requests', label: 'Requests', icon: FileText },
+    { id: 'chat', label: 'Chat', icon: MessageSquare },
+    { id: 'assets', label: 'Assets', icon: FolderOpen },
+    { id: 'subscriptions', label: 'Subscriptions', icon: CreditCard },
+    { id: 'buy', label: 'Buy Product', icon: ShoppingBag },
+    { id: 'billing', label: 'Billing', icon: Receipt },
+    { id: 'settings', label: 'Settings', icon: Settings }
   ];
 
-  const getFileIcon = (type: string) => {
-    switch (type) {
-      case 'images':
-        return <Image className="h-8 w-8 text-blue-500" />;
-      case 'document':
-        return <FileText className="h-8 w-8 text-red-500" />;
-      case 'design':
-        return <File className="h-8 w-8 text-purple-500" />;
-      case 'video':
-        return <Video className="h-8 w-8 text-green-500" />;
-      default:
-        return <File className="h-8 w-8 text-muted-foreground" />;
+  const tabs = isAdmin ? adminTabs : clientTabs;
+
+  const handleTabClick = (tabId: string) => {
+    if (onTabChange) {
+      onTabChange(tabId);
     }
+    setMobileMenuOpen(false);
   };
 
-  const filteredAssets = selectedCategory === 'all' 
-    ? assets 
-    : assets.filter(asset => asset.category === selectedCategory);
+  const getSubscriptionDisplay = () => {
+    if (!subscription || subscription.subscription_status === 'not_started') {
+      return 'No active plan';
+    }
+    
+    if (subscription.subscription_status === 'active' || subscription.subscription_status === 'trialing') {
+      return subscription.product_name || 'Active subscription';
+    }
+    
+    return `${subscription.subscription_status.replace('_', ' ')}`;
+  };
 
   return (
-    <div className="h-full flex flex-col space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h2 className="text-2xl font-bold tracking-tight">Assets</h2>
-          <p className="text-muted-foreground">
-            Manage and organize your project assets
-          </p>
-        </div>
-        <Button className="w-full sm:w-auto">
-          <Upload className="h-4 w-4 mr-2" />
-          Upload Asset
-        </Button>
-      </div>
-
-      {/* Filters and Controls */}
-      <Card>
-        <CardContent className="p-4">
-          <div className="flex flex-col sm:flex-row gap-4">
-            {/* Category Filter - Mobile Dropdown */}
-            <div className="flex-1">
-              <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select category" />
-                </SelectTrigger>
-                <SelectContent>
-                  {categories.map((category) => (
-                    <SelectItem key={category.value} value={category.value}>
-                      {category.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            {/* View Mode Toggle */}
-            <div className="flex gap-2">
-              <Button
-                variant={viewMode === 'grid' ? 'default' : 'outline'}
-                size="sm"
-                onClick={() => setViewMode('grid')}
-                className="flex-1 sm:flex-none"
-              >
-                <Grid3X3 className="h-4 w-4 mr-2" />
-                Grid
-              </Button>
-              <Button
-                variant={viewMode === 'list' ? 'default' : 'outline'}
-                size="sm"
-                onClick={() => setViewMode('list')}
-                className="flex-1 sm:flex-none"
-              >
-                <List className="h-4 w-4 mr-2" />
-                List
-              </Button>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Assets Grid/List */}
-      <div className="flex-1 overflow-auto">
-        {filteredAssets.length === 0 ? (
-          <Card className="h-full">
-            <CardContent className="flex flex-col items-center justify-center h-full p-8 text-center">
-              <FolderOpen className="h-16 w-16 text-muted-foreground mb-4" />
-              <h3 className="text-lg font-semibold mb-2">No assets found</h3>
-              <p className="text-muted-foreground mb-6 max-w-sm">
-                Upload your first asset to get started with organizing your project files.
-              </p>
-              <Button>
-                <Upload className="h-4 w-4 mr-2" />
-                Upload Asset
-              </Button>
-            </CardContent>
-          </Card>
-        ) : (
-          <div className={
-            viewMode === 'grid' 
-              ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4" 
-              : "space-y-3"
-          }>
-            {filteredAssets.map((asset) => (
-              <Card key={asset.id} className="group hover:shadow-md transition-shadow">
-                {viewMode === 'grid' ? (
-                  <CardContent className="p-4">
-                    <div className="flex flex-col items-center text-center space-y-3">
-                      {getFileIcon(asset.type)}
-                      <div className="w-full">
-                        <h4 className="font-medium text-sm truncate" title={asset.name}>
-                          {asset.name}
-                        </h4>
-                        <p className="text-xs text-muted-foreground mt-1">
-                          {asset.size}
-                        </p>
-                        <Badge variant="secondary" className="mt-2 text-xs">
-                          {asset.category}
-                        </Badge>
-                      </div>
-                      <div className="flex gap-2 w-full">
-                        <Button variant="outline" size="sm" className="flex-1">
-                          <Download className="h-3 w-3 mr-1" />
-                          Download
-                        </Button>
-                        <Button variant="ghost" size="sm">
-                          <MoreVertical className="h-3 w-3" />
-                        </Button>
-                      </div>
-                    </div>
-                  </CardContent>
-                ) : (
-                  <CardContent className="p-4">
-                    <div className="flex items-center space-x-4">
-                      <div className="flex-shrink-0">
-                        {getFileIcon(asset.type)}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <h4 className="font-medium truncate">{asset.name}</h4>
-                        <div className="flex items-center space-x-2 mt-1">
-                          <span className="text-sm text-muted-foreground">{asset.size}</span>
-                          <Separator orientation="vertical" className="h-4" />
-                          <Badge variant="secondary" className="text-xs">
-                            {asset.category}
-                          </Badge>
-                        </div>
-                        <p className="text-xs text-muted-foreground mt-1">
-                          Uploaded {asset.uploadedAt}
-                        </p>
-                      </div>
-                      <div className="flex gap-2">
-                        <Button variant="outline" size="sm">
-                          <Download className="h-4 w-4" />
-                        </Button>
-                        <Button variant="ghost" size="sm">
-                          <MoreVertical className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </div>
-                  </CardContent>
+    <div className="min-h-screen bg-background flex">
+      {/* Desktop Sidebar */}
+      {showSidebar && (
+        <div className={cn(
+          "hidden lg:flex flex-col bg-card border-r transition-all duration-300",
+          sidebarCollapsed ? "w-16" : "w-64"
+        )}>
+          {/* Sidebar Header */}
+          <div className="p-6 border-b">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+              <div className={cn(
+                "flex items-center",
+                sidebarCollapsed ? "justify-center" : "space-x-3"
+              )}>
+                <img src="/logo.svg" alt="Creative Acts" className="h-8 w-8 flex-shrink-0" />
+                {!sidebarCollapsed && (
+                  <span className="font-semibold text-foreground">Creative Acts</span>
                 )}
-              </Card>
-            ))}
+              </div>
+              {!sidebarCollapsed && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setSidebarCollapsed(true)}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              )}
+            </div>
           </div>
-        )}
+
+          {/* Navigation */}
+          <nav className="flex-1 p-4">
+            <div className="space-y-1">
+              {tabs.map((tab) => {
+                const IconComponent = tab.icon;
+                const isActive = activeTab === tab.id;
+                return (
+                  <Button
+                    key={tab.id}
+                    variant={isActive ? "secondary" : "ghost"}
+                    className={cn(
+                      "w-full justify-start",
+                      sidebarCollapsed && "justify-center px-2"
+                    )}
+                    onClick={() => handleTabClick(tab.id)}
+                    title={sidebarCollapsed ? tab.label : undefined}
+                  >
+                    <IconComponent className="h-4 w-4 flex-shrink-0" />
+                    {!sidebarCollapsed && <span className="ml-3">{tab.label}</span>}
+                  </Button>
+                );
+              })}
+            </div>
+          </nav>
+
+          <Separator />
+
+          {/* User Section */}
+          <div className="p-4">
+            <div className={cn(
+              "flex items-center",
+              sidebarCollapsed ? "justify-center" : "space-x-3 mb-3"
+            )}>
+              <Avatar className="h-8 w-8">
+                <AvatarFallback>
+                  <User className="h-4 w-4" />
+                </AvatarFallback>
+              </Avatar>
+              {!sidebarCollapsed && (
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-foreground truncate">
+                    {user?.user_metadata?.name || user?.email}
+                  </p>
+                  <p className="text-xs text-muted-foreground truncate">
+                    {getSubscriptionDisplay()}
+                {!sidebarCollapsed && (
+                  <span className="font-semibold text-foreground">Creative Acts</span>
+                )}
+              </div>
+              {!sidebarCollapsed && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setSidebarCollapsed(true)}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              )}
+            </div>
+          </div>
+
+          {/* Expand button when collapsed */}
+          {sidebarCollapsed && (
+            <div className="p-2 border-b border-border">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="w-full justify-start"
+                onClick={signOut}
+                onClick={() => setSidebarCollapsed(false)}
+                className="w-full"
+                <LogOut className="h-4 w-4 mr-2" />
+                <Menu className="h-4 w-4" />
+              </Button>
+          )}
+        </div>
+      )}
+
+      {/* Mobile Sidebar Overlay */}
+      {showSidebar && mobileMenuOpen && (
+        <div className="lg:hidden fixed inset-0 z-50 bg-background/80 backdrop-blur-sm">
+          <div className="fixed inset-y-0 left-0 w-64 bg-card border-r shadow-lg">
+            {/* Mobile Sidebar Header */}
+            <div className="p-6 border-b">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <img src="/logo.svg" alt="Creative Acts" className="h-8 w-8 flex-shrink-0" />
+                  <span className="font-semibold text-foreground">Creative Acts</span>
+                </div>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+
+            {/* Mobile Navigation */}
+            <nav className="flex-1 p-4">
+              <div className="space-y-1">
+                {tabs.map((tab) => {
+                  const IconComponent = tab.icon;
+                  const isActive = activeTab === tab.id;
+                  return (
+                    <Button
+                      key={tab.id}
+                      variant={isActive ? "secondary" : "ghost"}
+                      className="w-full justify-start"
+                      onClick={() => handleTabClick(tab.id)}
+                    >
+                      <IconComponent className="h-4 w-4 mr-3" />
+                      {tab.label}
+                    </Button>
+                  );
+                })}
+              </div>
+            </nav>
+
+            <Separator />
+
+            {/* Mobile User Section */}
+            <div className="p-4">
+              <div className="flex items-center space-x-3 mb-3">
+                <Avatar className="h-8 w-8">
+                  <AvatarFallback>
+                    <User className="h-4 w-4" />
+                  </AvatarFallback>
+                </Avatar>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-foreground truncate">
+                    {user?.user_metadata?.name || user?.email}
+                  </p>
+                  <p className="text-xs text-muted-foreground truncate">
+                    {getSubscriptionDisplay()}
+                  </p>
+                </div>
+              </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="w-full justify-start"
+                onClick={signOut}
+              >
+                <LogOut className="h-4 w-4 mr-2" />
+                Sign out
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Main Content */}
+      <div className="flex-1 flex flex-col min-w-0">
+        {/* Top Header */}
+        <header className="sticky top-0 z-30 bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/60 border-b px-4 py-3 lg:px-6">
+          <div className="w-full max-w-[1400px] mx-auto flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              {showSidebar && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setMobileMenuOpen(true)}
+                  className="lg:hidden"
+                >
+                  <Menu className="h-4 w-4" />
+                </Button>
+              )}
+              <h1 className="text-xl font-semibold text-foreground">{title}</h1>
+            </div>
+            
+            {/* Mobile User Menu */}
+            <div className="lg:hidden">
+              <Avatar className="h-8 w-8">
+                <AvatarFallback>
+                  <User className="h-4 w-4" />
+                </AvatarFallback>
+              </Avatar>
+            </div>
+          </div>
+        </header>
+
+        {/* Content Area */}
+        <main className="flex-1 h-full overflow-auto">
+          <div className="w-full h-full max-w-[1400px] mx-auto px-4 py-6 lg:px-6">
+            {children}
+          </div>
+        </main>
       </div>
+
+      {/* Mobile Bottom Navigation */}
+      {showSidebar && (
+        <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/60 border-t px-2 py-2 z-40">
+          <div className="flex justify-around items-center max-w-md mx-auto">
+            {tabs.slice(0, 5).map((tab) => {
+              const IconComponent = tab.icon;
+              const isActive = activeTab === tab.id;
+              return (
+                <Button
+                  key={tab.id}
+                  variant="ghost"
+                  size="sm"
+                  className={cn(
+                    "flex flex-col items-center justify-center h-auto py-2 px-3 min-w-0 space-y-1",
+                    isActive && "text-primary bg-secondary"
+                  )}
+                  onClick={() => handleTabClick(tab.id)}
+                >
+                  <IconComponent className="h-4 w-4" />
+                  <span className="text-xs font-medium truncate max-w-[60px]">
+                    {tab.label}
+                  </span>
+                </Button>
+              );
+            })}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
